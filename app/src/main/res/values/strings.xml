@@ -4,4 +4,6 @@
     <string name="main_btn_02">Visualizar datos generales</string>
     <string name="second_tv_00">Verificar Usuarios Registrados</string>
     <string name="second_tv_01">Verificando…</string>
+    <string name="third_tv_01">Visualizar Estadísticas Generales</string>
+    <string name="third_btn_01">Cargar Datos</string>
 </resources>
