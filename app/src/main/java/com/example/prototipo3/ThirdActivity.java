@@ -31,7 +31,7 @@ public class ThirdActivity extends AppCompatActivity {
             Log.d("ThirdActivity", "Reporte General...");
             getGeneralReport();
             Log.d("ThirdActivity", "Respuesta Sencilla Obtenida");
-        }));
+        }).start());
     }
 
     public void getGeneralReport() {
