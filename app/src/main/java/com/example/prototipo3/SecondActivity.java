@@ -21,23 +21,15 @@ public class SecondActivity extends AppCompatActivity {
 
         TextView tv = this.findViewById(R.id.second_tv_01);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Log.d("SecondActivity", "Obteniendo los tokens del servidor...");
-                    String tokens = getTokens();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            tv.setText(tokens);
-                        }
-                    });
+        new Thread(() -> {
+            try {
+                Log.d("SecondActivity", "Obteniendo los tokens del servidor...");
+                String tokens = getTokens();
+                runOnUiThread(() -> tv.setText(tokens));
 
-                    Log.d("SecondActivity", "Tokens obtenidos!");
-                } catch (Exception e) {
-                    Log.e("Error al obtener los tokens: ", e.toString());
-                }
+                Log.d("SecondActivity", "Tokens obtenidos!");
+            } catch (Exception e) {
+                Log.e("Error al obtener los tokens: ", e.toString());
             }
         }).start();
     }

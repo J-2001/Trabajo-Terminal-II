@@ -5,7 +5,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -28,7 +27,11 @@ public class ThirdActivity extends AppCompatActivity {
         coordinatorLayout = this.findViewById(R.id.thirdActivity);
 
         Button btn = this.findViewById(R.id.third_btn_01);
-        btn.setOnClickListener(v -> getGeneralReport());
+        btn.setOnClickListener(v -> new Thread(() -> {
+            Log.d("ThirdActivity", "Reporte General...");
+            getGeneralReport();
+            Log.d("ThirdActivity", "Respuesta Sencilla Obtenida");
+        }));
     }
 
     public void getGeneralReport() {
