@@ -29,9 +29,37 @@ public class ThirdActivity extends AppCompatActivity {
         Button btn = this.findViewById(R.id.third_btn_01);
         btn.setOnClickListener(v -> new Thread(() -> {
             Log.d("ThirdActivity", "Reporte General...");
-            getGeneralReport();
-            Log.d("ThirdActivity", "Respuesta Sencilla Obtenida");
+            //getGeneralReport();
+            requestDataExtraction();
         }).start());
+    }
+
+    public void requestDataExtraction() {
+        String response = "R: ";
+        try {
+            URL url = new URL("https://trabajo-terminal-servidor.uc.r.appspot.com");
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            try {
+                urlConnection.setRequestProperty("Accion", "Extract");
+
+                InputStream is = new BufferedInputStream(urlConnection.getInputStream());
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                while (is.read(buffer) != -1) {
+                    baos.write(buffer);
+                }
+                response += baos.toString();
+            } catch (Exception e){
+                throw new Exception(e.getCause());
+            } finally {
+                urlConnection.disconnect();
+            }
+        } catch (Exception e) {
+            Log.e("Error(01): ", e.toString());
+        }
+
+        Log.i("Pruebas(01): ", response);
     }
 
     public void getGeneralReport() {
