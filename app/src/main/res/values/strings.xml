@@ -6,6 +6,7 @@
     <string name="second_tv_01">Verificando…</string>
     <string name="second_tv_02">%d usuarios detectados!</string>
     <string name="second_tv_03">Verificando %d / %d usuarios</string>
+    <string name="second_tv_04">Parece ser que no se pudo verificar ningún dispositivo :/</string>
     <string name="third_tv_01">Visualizar Estadísticas Generales</string>
     <string name="third_btn_01">Cargar Datos</string>
 </resources>

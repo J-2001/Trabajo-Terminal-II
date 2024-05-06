@@ -11,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 public class SecondActivity extends AppCompatActivity {
 
@@ -28,9 +27,21 @@ public class SecondActivity extends AppCompatActivity {
                 int n = requestDevicesInfo();
                 runOnUiThread(() -> tv.setText(getString(R.string.second_tv_02, n)));
                 int limit = 10;
+                boolean nonzero = false;
                 while (limit > 0) {
                     Thread.sleep(1000);
+                    int m = checkCollectedInfo();
+                    runOnUiThread(() -> tv.setText(getString(R.string.second_tv_03, m, n)));
+                    if (m > 0) {
+                        nonzero = true;
+                    }
                     limit--;
+                }
+                if (nonzero) {
+                    String info = getInfo();
+                    runOnUiThread(() -> tv.setText(info));
+                } else {
+                    runOnUiThread(() -> tv.setText(getString(R.string.second_tv_04)));
                 }
             } catch (Exception e) {
                 Log.e("Error al obtener los tokens: ", e.toString());
@@ -52,8 +63,7 @@ public class SecondActivity extends AppCompatActivity {
                 while ((nRead = is.read(buffer)) != -1) {
                     baos.write(buffer, 0, nRead);
                 }
-                String n = new String(baos.toByteArray(), StandardCharsets.UTF_8);
-                return Integer.parseInt(n);
+                return Integer.parseInt(baos.toString());
             } catch (Exception e) {
                 throw new Exception(e.getCause());
             } finally {
@@ -62,6 +72,59 @@ public class SecondActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("Error - requestDevicesInfo(): ", e.toString());
             return 0;
+        }
+    }
+
+    public int checkCollectedInfo() {
+        try {
+            URL url = new URL("https://trabajo-terminal-servidor.uc.r.appspot.com");
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            try {
+                urlConnection.setRequestProperty("Accion", "CInfo");
+                InputStream is = new BufferedInputStream(urlConnection.getInputStream());
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(buffer)) != -1) {
+                    baos.write(buffer, 0, nRead);
+                }
+                return Integer.parseInt(baos.toString());
+            } catch (Exception e) {
+                throw new Exception(e.getCause());
+            } finally {
+                urlConnection.disconnect();
+            }
+        } catch (Exception e) {
+            Log.e("Error - checkCollectedInfo(): ", e.toString());
+            return 0;
+        }
+    }
+
+    public String getInfo() {
+        try {
+            URL url = new URL("https://trabajo-terminal-servidor.uc.r.appspot.com");
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            try {
+                urlConnection.setRequestProperty("Accion", "GInfo");
+                InputStream is = new BufferedInputStream(urlConnection.getInputStream());
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(buffer)) != -1) {
+                    baos.write(buffer, 0, nRead);
+                }
+                String info = baos.toString();
+                return info;
+            } catch (Exception e) {
+                throw new Exception(e.getCause());
+            } finally {
+                urlConnection.disconnect();
+            }
+        } catch (Exception e) {
+            Log.e("Error - getInfo(): ", e.toString());
+            return "Error!";
         }
     }
 
