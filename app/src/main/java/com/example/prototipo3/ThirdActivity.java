@@ -29,64 +29,36 @@ public class ThirdActivity extends AppCompatActivity {
         Button btn = this.findViewById(R.id.third_btn_01);
         btn.setOnClickListener(v -> new Thread(() -> {
             Log.d("ThirdActivity", "Reporte General...");
-            //getGeneralReport();
-            requestDataExtraction();
+            String all = getAllData();
+            Log.i("getAllData()", all);
         }).start());
     }
 
-    public void requestDataExtraction() {
-        String response = "R: ";
+    public String getAllData() {
         try {
             URL url = new URL("https://trabajo-terminal-servidor.uc.r.appspot.com");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
             try {
-                urlConnection.setRequestProperty("Accion", "Extract");
+                urlConnection.setRequestProperty("Accion", "All");
 
                 InputStream is = new BufferedInputStream(urlConnection.getInputStream());
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
-                while (is.read(buffer) != -1) {
-                    baos.write(buffer);
+                int nRead;
+                while ((nRead = is.read(buffer)) != -1) {
+                    baos.write(buffer, 0, nRead);
                 }
-                response += baos.toString();
-            } catch (Exception e){
+
+                return baos.toString();
+            } catch (Exception e) {
                 throw new Exception(e.getCause());
             } finally {
                 urlConnection.disconnect();
             }
         } catch (Exception e) {
-            Log.e("Error(01): ", e.toString());
+            Log.e("getAllData()", e.toString());
+            return "0";
         }
-
-        Log.i("Pruebas(01): ", response);
-    }
-
-    public void getGeneralReport() {
-        String response = "R: ";
-
-        try {
-            URL url = new URL("https://trabajo-terminal-servidor.uc.r.appspot.com");
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-            try {
-                urlConnection.setRequestProperty("Accion",  "Reporte");
-
-                InputStream is = new BufferedInputStream(urlConnection.getInputStream());
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                while ( is.read(buffer) != -1 ) {
-                    baos.write(buffer);
-                }
-                response += baos.toString();
-            } finally {
-                urlConnection.disconnect();
-            }
-        } catch (Exception e) {
-            Log.e("Error al leer y conectarse a la URL del servidor", e.toString());
-        }
-
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, response, Snackbar.LENGTH_LONG);
-        snackbar.show();
     }
 }
