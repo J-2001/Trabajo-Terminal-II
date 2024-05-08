@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
