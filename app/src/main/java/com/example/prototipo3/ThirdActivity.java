@@ -13,6 +13,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ThirdActivity extends AppCompatActivity {
 
@@ -32,10 +35,64 @@ public class ThirdActivity extends AppCompatActivity {
         btn.setOnClickListener(v -> new Thread(() -> {
             Log.d("ThirdActivity", "Reporte General...");
 
-            String all = getAllData();
+            String[] all = getAllData().split("/");
 
-            runOnUiThread(() -> tv.append(all));
+            runOnUiThread(() -> tv.append(Arrays.toString(all)));
 
+            String[] allInfo = all[0].split("_");
+            String[] allData = all[1].split("_");
+
+            List<String> ainfo = new ArrayList<>();
+            List<String> adata = new ArrayList<>();
+
+            for (int i = 0; i < allData.length; i++) {
+                if (!allData[i].equals("0") && !allData[i].equals(":::")) {
+                    ainfo.add(allInfo[i]);
+                    adata.add(allData[i]);
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\nInfo: " + ainfo));
+            runOnUiThread(() -> tv.append("\nData: " + adata));
+
+            List<List<String>> info = new ArrayList<>();
+
+            for (int i = 0; i < ainfo.size(); i++) {
+                info.add(new ArrayList<>());
+                String[] dinfo = ainfo.get(i).split(";");
+                for (String s : dinfo) {
+                    info.get(i).add(s.split(":")[1]);
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\nInfo: " + info));
+
+            List<List<String>> data = new ArrayList<>();
+
+            for (int i = 0; i < adata.size(); i++) {
+                data.add(new ArrayList<>());
+                String[] dbs = adata.get(i).split(":");
+                for (String s : dbs) {
+                    data.get(i).add(s);
+                }
+            }
+
+            List<List<List<Object>>> bateria = new ArrayList<>();
+
+            for (int i = 0; i < data.size(); i++) {
+                bateria.add(new ArrayList<>());
+                String[] rows = data.get(i).get(0).split(";");
+                for (int j = 0; j < rows.length; j++) {
+                    bateria.get(i).add(new ArrayList<>());
+                    String[] row = rows[j].split(",");
+                    bateria.get(i).get(j).add(Integer.valueOf(row[0]));
+                    bateria.get(i).get(j).add(Integer.valueOf(row[1]));
+                    bateria.get(i).get(j).add(Integer.valueOf(row[2]));
+                    bateria.get(i).get(j).add(Integer.valueOf(row[3]));
+                    bateria.get(i).get(j).add(Integer.valueOf(row[4]));
+                    bateria.get(i).get(j).add(Integer.valueOf(row[5]));
+                }
+            }
 
         }).start());
     }
