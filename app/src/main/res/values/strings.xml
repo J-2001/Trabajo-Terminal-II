@@ -5,6 +5,6 @@
     <string name="second_tv">Verificar Usuarios Registrados</string>
     <string name="second_tv_01">Obteniendo los Datos…</string>
     <string name="second_tv_02">Parece ser que no hay ningún dispositivo registrado :/</string>
-    <string name="third_tv_01">Visualizar Estadísticas Generales</string>
+    <string name="third_tv">Visualizar Estadísticas Generales</string>
     <string name="third_btn_01">Cargar Datos</string>
 </resources>

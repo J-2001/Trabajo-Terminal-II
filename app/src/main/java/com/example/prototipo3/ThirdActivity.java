@@ -6,6 +6,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,11 +25,18 @@ public class ThirdActivity extends AppCompatActivity {
 
         coordinatorLayout = this.findViewById(R.id.thirdActivity);
 
+        TextView tv = this.findViewById(R.id.third_tv_01);
+
         Button btn = this.findViewById(R.id.third_btn_01);
+
         btn.setOnClickListener(v -> new Thread(() -> {
             Log.d("ThirdActivity", "Reporte General...");
+
             String all = getAllData();
-            Log.i("getAllData()", all);
+
+            runOnUiThread(() -> tv.append(all));
+
+
         }).start());
     }
 
