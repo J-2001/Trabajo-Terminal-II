@@ -15,7 +15,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ThirdActivity extends AppCompatActivity {
 
@@ -88,11 +91,126 @@ public class ThirdActivity extends AppCompatActivity {
                     bateria.get(i).get(j).add(Integer.valueOf(row[0]));
                     bateria.get(i).get(j).add(Integer.valueOf(row[1]));
                     bateria.get(i).get(j).add(Integer.valueOf(row[2]));
-                    bateria.get(i).get(j).add(Integer.valueOf(row[3]));
-                    bateria.get(i).get(j).add(Integer.valueOf(row[4]));
-                    bateria.get(i).get(j).add(Integer.valueOf(row[5]));
+                    bateria.get(i).get(j).add(Float.valueOf(row[3]));
+                    bateria.get(i).get(j).add(Long.valueOf(row[4]));
                 }
             }
+
+            runOnUiThread(() -> tv.append("\nBateria: " + bateria));
+
+            List<List<List<Object>>> analizador = new ArrayList<>();
+
+            for (int i = 0; i < data.size(); i++) {
+                analizador.add(new ArrayList<>());
+                String[] rows = data.get(i).get(1).split(";");
+                for (int j = 0; j < rows.length; j++) {
+                    analizador.get(i).add(new ArrayList<>());
+                    String[] row = rows[j].split(",");
+                    analizador.get(i).get(j).add(Integer.valueOf(row[0]));
+                    analizador.get(i).get(j).add(Integer.valueOf(row[1]));
+                    analizador.get(i).get(j).add(Integer.valueOf(row[2]));
+                    analizador.get(i).get(j).add(Float.valueOf(row[3]));
+                    analizador.get(i).get(j).add(Float.valueOf(row[4]));
+                    analizador.get(i).get(j).add(Float.valueOf(row[5]));
+                    analizador.get(i).get(j).add(Float.valueOf(row[6]));
+                    analizador.get(i).get(j).add(Boolean.valueOf(row[7]));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\nAnalizador: " + analizador));
+
+            List<List<List<Object>>> escaneo = new ArrayList<>();
+
+            for (int i = 0; i < data.size(); i++) {
+                escaneo.add(new ArrayList<>());
+                String[] rows = data.get(i).get(2).split(";");
+                for (int j = 0; j < rows.length; j++) {
+                    escaneo.get(i).add(new ArrayList<>());
+                    String[] row = rows[j].split(",");
+                    escaneo.get(i).get(j).add(Integer.valueOf(row[0]));
+                    escaneo.get(i).get(j).add(Integer.valueOf(row[1]));
+                    escaneo.get(i).get(j).add(Long.valueOf(row[2]));
+                    escaneo.get(i).get(j).add(Integer.valueOf(row[3]));
+                    escaneo.get(i).get(j).add(Float.valueOf(row[4]));
+                    escaneo.get(i).get(j).add(String.valueOf(row[5]));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\nEscaneo: " + escaneo));
+
+            List<List<List<Object>>> huella = new ArrayList<>();
+
+            for (int i = 0; i < data.size(); i++) {
+                huella.add(new ArrayList<>());
+                String[] rows = data.get(i).get(3).split(";");
+                for (int j = 0; j < rows.length; j++) {
+                    huella.get(i).add(new ArrayList<>());
+                    String[] row = rows[j].split(",");
+                    huella.get(i).get(j).add(Integer.valueOf(row[0]));
+                    huella.get(i).get(j).add(Float.valueOf(row[1]));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\nHuella: " + huella));
+
+            runOnUiThread(() -> tv.append("\n\nNo. Dispositivos Registrados: " + info.size()));
+
+            float thc = 0;
+
+            for (List<List<Object>> footprint : huella) {
+                for (List<Object> h : footprint) {
+                    thc += (Float) h.get(1);
+                }
+            }
+
+            float totalHuellaCarbono = thc;
+            runOnUiThread(() -> tv.append("\n\nHuella de Carbono Total Generada: " + totalHuellaCarbono + " gCO2e"));
+
+            int tec = 0;
+            long ttv = 0;
+            Map<String, Integer> appsVistas = new HashMap<>();
+            appsVistas.put(getString(R.string.netflix), 0);
+            appsVistas.put(getString(R.string.disneyplus), 0);
+            appsVistas.put(getString(R.string.starplus), 0);
+            appsVistas.put(getString(R.string.primevideo), 0);
+            appsVistas.put(getString(R.string.max), 0);
+            appsVistas.put(getString(R.string.crunchyroll), 0);
+            appsVistas.put(getString(R.string.vix), 0);
+            Map<String, Long> appsUso = new HashMap<>();
+            appsUso.put(getString(R.string.netflix), 0L);
+            appsUso.put(getString(R.string.disneyplus), 0L);
+            appsUso.put(getString(R.string.starplus), 0L);
+            appsUso.put(getString(R.string.primevideo), 0L);
+            appsUso.put(getString(R.string.max), 0L);
+            appsUso.put(getString(R.string.crunchyroll), 0L);
+            appsUso.put(getString(R.string.vix), 0L);
+
+            for (List<List<Object>> scan : escaneo) {
+                for (List<Object> s : scan) {
+                    tec += (Integer) s.get(3);
+                    ttv += (Long) s.get(2);
+                    appsVistas.put((String) s.get(5), appsVistas.get((String) s.get(5)) + 1);
+                    appsUso.put((String) s.get(5), appsUso.get((String) s.get(5)) + (Long) s.get(2));
+                }
+            }
+
+            int totalEnergiaConsumida = tec;
+            runOnUiThread(() -> tv.append("\n\nTotal de Energia Consumida: " + totalEnergiaConsumida + " uAh"));
+
+            long totalTiempoVisualizado = ttv/(1000*60*60);
+            runOnUiThread(() -> tv.append("\n\nTotal de Tiempo Visualizado: " + totalTiempoVisualizado + " h"));
+
+            Map.Entry<String, Integer> appMasVista = Collections.max(appsVistas.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nApp de VS Mas Visualizada: " + appMasVista.getKey()));
+            runOnUiThread(() -> tv.append("\nNo. de Veces Vista: " + appMasVista.getValue()));
+
+            Map.Entry<String, Long> appMasUsada = Collections.max(appsUso.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nApp Mas Tiempo Usada: " + appMasUsada.getKey()));
+            runOnUiThread(() -> tv.append("\nTiempo Usada: " + appMasUsada.getValue()/(1000*60*60) + " h"));
+
+            //App que mas enegia y huella de carbono genera
+
+            runOnUiThread(() -> tv.append("\n\n"));
 
         }).start());
     }

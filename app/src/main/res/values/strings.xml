@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Nombre de la Aplicación Administrador</string>
+    <string name="netflix">Netflix</string>
+    <string name="disneyplus">Disney+</string>
+    <string name="starplus">Star+</string>
+    <string name="primevideo">Prime Video</string>
+    <string name="max">Max</string>
+    <string name="crunchyroll">Crunchyroll</string>
+    <string name="vix">ViX</string>
     <string name="main_btn_01">Verificar usuarios registrados</string>
     <string name="main_btn_02">Visualizar datos generales</string>
     <string name="second_tv">Verificar Usuarios Registrados</string>
