@@ -22,6 +22,8 @@ import java.util.Map;
 
 public class ThirdActivity extends AppCompatActivity {
 
+    private String[] vsAppsNames = {getString(R.string.netflix), getString(R.string.disneyplus), getString(R.string.starplus), getString(R.string.primevideo), getString(R.string.max), getString(R.string.crunchyroll), getString(R.string.vix)};
+
     private CoordinatorLayout coordinatorLayout;
 
     @Override
@@ -166,31 +168,64 @@ public class ThirdActivity extends AppCompatActivity {
             float totalHuellaCarbono = thc;
             runOnUiThread(() -> tv.append("\n\nHuella de Carbono Total Generada: " + totalHuellaCarbono + " gCO2e"));
 
+            List<String> manufacturers = new ArrayList<>();
+            List<String> brands = new ArrayList<>();
+            List<String> versions = new ArrayList<>();
+            for (List<String> inf : info) {
+                if (!manufacturers.contains(inf.get(0))) {
+                    manufacturers.add(inf.get(0));
+                }
+                if (!brands.contains(inf.get(1))) {
+                    brands.add(inf.get(1));
+                }
+                if (!versions.contains(inf.get(3))) {
+                    versions.add(inf.get(3));
+                }
+            }
+
             int tec = 0;
             long ttv = 0;
             Map<String, Integer> appsVistas = new HashMap<>();
-            appsVistas.put(getString(R.string.netflix), 0);
-            appsVistas.put(getString(R.string.disneyplus), 0);
-            appsVistas.put(getString(R.string.starplus), 0);
-            appsVistas.put(getString(R.string.primevideo), 0);
-            appsVistas.put(getString(R.string.max), 0);
-            appsVistas.put(getString(R.string.crunchyroll), 0);
-            appsVistas.put(getString(R.string.vix), 0);
+            for (String vsAppName : vsAppsNames) {
+                appsVistas.put(vsAppName, 0);
+            }
             Map<String, Long> appsUso = new HashMap<>();
-            appsUso.put(getString(R.string.netflix), 0L);
-            appsUso.put(getString(R.string.disneyplus), 0L);
-            appsUso.put(getString(R.string.starplus), 0L);
-            appsUso.put(getString(R.string.primevideo), 0L);
-            appsUso.put(getString(R.string.max), 0L);
-            appsUso.put(getString(R.string.crunchyroll), 0L);
-            appsUso.put(getString(R.string.vix), 0L);
+            for (String vsAppName : vsAppsNames) {
+                appsUso.put(vsAppName, 0L);
+            }
+            List<Map<String, List<Integer>>> vspu = new ArrayList<>();
+            Map<String, Integer> appsConsumo = new HashMap<>();
+            for (String vsAppName : vsAppsNames) {
+                appsConsumo.put(vsAppName, 0);
+            }
+            Map<String, Integer> fabricantesVistas = new HashMap<>();
+            for (String manufacturer : manufacturers) {
+                fabricantesVistas.put(manufacturer, 0);
+            }
+            Map<String, Long> fabricantesUso = new HashMap<>();
+            for (String manufacturer : manufacturers) {
+                fabricantesUso.put(manufacturer, 0L);
+            }
+            List<Map<String, List<Integer>>> mpu = new ArrayList<>();
+            Map<String, Integer> fabricantesConsumo = new HashMap<>();
+            for (String manufacturer : manufacturers) {
+                fabricantesConsumo.put(manufacturer, 0);
+            }
 
-            for (List<List<Object>> scan : escaneo) {
-                for (List<Object> s : scan) {
+            for (int i = 0; i < escaneo.size(); i++) {
+                vspu.add(new HashMap<>());
+                for (String vsAppName : vsAppsNames) {
+                    vspu.get(i).put(vsAppName, new ArrayList<>());
+                }
+                int id = 1;
+                for (List<Object> s : escaneo.get(i)) {
                     tec += (Integer) s.get(3);
                     ttv += (Long) s.get(2);
                     appsVistas.put((String) s.get(5), appsVistas.get((String) s.get(5)) + 1);
                     appsUso.put((String) s.get(5), appsUso.get((String) s.get(5)) + (Long) s.get(2));
+                    vspu.get(i).get((String) s.get(5)).add(id);
+                    appsConsumo.put((String) s.get(5), appsConsumo.get((String) s.get(5)) + (Integer) s.get(3));
+                    id++;
                 }
             }
 
@@ -201,16 +236,65 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> tv.append("\n\nTotal de Tiempo Visualizado: " + totalTiempoVisualizado + " h"));
 
             Map.Entry<String, Integer> appMasVista = Collections.max(appsVistas.entrySet(), Map.Entry.comparingByValue());
-            runOnUiThread(() -> tv.append("\n\nApp de VS Mas Visualizada: " + appMasVista.getKey()));
+            runOnUiThread(() -> tv.append("\n\nApp de VS Mas Veces Vista: " + appMasVista.getKey()));
             runOnUiThread(() -> tv.append("\nNo. de Veces Vista: " + appMasVista.getValue()));
 
             Map.Entry<String, Long> appMasUsada = Collections.max(appsUso.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> tv.append("\n\nApp Mas Tiempo Usada: " + appMasUsada.getKey()));
             runOnUiThread(() -> tv.append("\nTiempo Usada: " + appMasUsada.getValue()/(1000*60*60) + " h"));
 
-            //App que mas enegia y huella de carbono genera
+            Map<String, Float> appsCO2 = new HashMap<>();
+            for (String vsAppName : vsAppsNames) {
+                appsCO2.put(vsAppName, 0F);
+            }
+            for (int i = 0; i < huella.size(); i++) {
+                for (List<Object> h : huella.get(i)) {
+                    for (String vs : vspu.get(i).keySet()) {
+                        if (vspu.get(i).get(vs).contains((Integer) h.get(0))) {
+                            appsCO2.put(vs, appsCO2.get(vs) + (Float) h.get(1));
+                            break;
+                        }
+                    }
+                }
+            }
 
-            runOnUiThread(() -> tv.append("\n\n"));
+            Map.Entry<String, Float> appMayorCO2 = Collections.max(appsCO2.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\napp que Generó una Mayor Huella de Carbono: " + appMayorCO2.getKey()));
+            runOnUiThread(() -> tv.append("\nHuella de Carbono: " + appMayorCO2.getValue() + "gCO2e"));
+
+            Map.Entry<String, Integer> appMayorConsumo = Collections.max(appsConsumo.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\napp que Consumió la Mayor Cantidad de energía: " + appMayorConsumo.getKey()));
+            runOnUiThread(() -> tv.append("\nenergía Consumida : " + appMayorConsumo.getValue() + " uAh"));
+
+            runOnUiThread(() -> tv.append("\n\nNúmero de Visualizaciones por app:"));
+            for (Map.Entry<String, Integer> vistas : appsVistas.entrySet()) {
+                if (vistas.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + vistas.getKey() + ": " + vistas.getValue()));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nTiempo de Uso por app:"));
+            for (Map.Entry<String, Long> uso : appsUso.entrySet()) {
+                if (uso.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + uso.getKey() + ": " + uso.getValue() + " h"));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nHuella de Carbono por app:"));
+            for (Map.Entry<String, Float> co2 : appsCO2.entrySet()) {
+                if (co2.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + co2.getKey() + ": " + co2.getValue() + " gCo2e"));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nenergía Consumida por app:"));
+            for (Map.Entry<String, Integer> consumo : appsConsumo.entrySet()) {
+                if (consumo.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + consumo.getKey() + ": " + consumo.getValue() + " uAh"));
+                }
+            }
+
+
 
         }).start());
     }
