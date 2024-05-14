@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class ThirdActivity extends AppCompatActivity {
 
-    private String[] vsAppsNames = {getString(R.string.netflix), getString(R.string.disneyplus), getString(R.string.starplus), getString(R.string.primevideo), getString(R.string.max), getString(R.string.crunchyroll), getString(R.string.vix)};
+    private String[] vsAppsNames;
 
     private CoordinatorLayout coordinatorLayout;
 
@@ -30,6 +30,8 @@ public class ThirdActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third);
+
+        vsAppsNames = new String[]{getString(R.string.netflix), getString(R.string.disneyplus), getString(R.string.starplus), getString(R.string.primevideo), getString(R.string.max), getString(R.string.crunchyroll), getString(R.string.vix)};
 
         coordinatorLayout = this.findViewById(R.id.thirdActivity);
 
@@ -51,7 +53,7 @@ public class ThirdActivity extends AppCompatActivity {
             List<String> adata = new ArrayList<>();
 
             for (int i = 0; i < allData.length; i++) {
-                if (!allData[i].equals("0") && !allData[i].equals(":::")) {
+                if (!allData[i].equals("0") && !allData[i].endsWith("::")) {
                     ainfo.add(allInfo[i]);
                     adata.add(allData[i]);
                 }
@@ -155,19 +157,6 @@ public class ThirdActivity extends AppCompatActivity {
 
             runOnUiThread(() -> tv.append("\nHuella: " + huella));
 
-            runOnUiThread(() -> tv.append("\n\nNo. Dispositivos Registrados: " + info.size()));
-
-            float thc = 0;
-
-            for (List<List<Object>> footprint : huella) {
-                for (List<Object> h : footprint) {
-                    thc += (Float) h.get(1);
-                }
-            }
-
-            float totalHuellaCarbono = thc;
-            runOnUiThread(() -> tv.append("\n\nHuella de Carbono Total Generada: " + totalHuellaCarbono + " gCO2e"));
-
             List<String> manufacturers = new ArrayList<>();
             List<String> brands = new ArrayList<>();
             List<String> versions = new ArrayList<>();
@@ -183,8 +172,11 @@ public class ThirdActivity extends AppCompatActivity {
                 }
             }
 
-            int tec = 0;
+            runOnUiThread(() -> tv.append("\n\nNo. Dispositivos Registrados: " + info.size()));
+
+            int tvu = 0;
             long ttv = 0;
+            int tec = 0;
             Map<String, Integer> appsVistas = new HashMap<>();
             for (String vsAppName : vsAppsNames) {
                 appsVistas.put(vsAppName, 0);
@@ -198,57 +190,103 @@ public class ThirdActivity extends AppCompatActivity {
             for (String vsAppName : vsAppsNames) {
                 appsConsumo.put(vsAppName, 0);
             }
-            Map<String, Integer> fabricantesVistas = new HashMap<>();
+            Map<String, Integer> fabricantesUsos = new HashMap<>();
             for (String manufacturer : manufacturers) {
-                fabricantesVistas.put(manufacturer, 0);
+                fabricantesUsos.put(manufacturer, 0);
             }
-            Map<String, Long> fabricantesUso = new HashMap<>();
+            Map<String, Long> fabricantesVisualizacion = new HashMap<>();
             for (String manufacturer : manufacturers) {
-                fabricantesUso.put(manufacturer, 0L);
+                fabricantesVisualizacion.put(manufacturer, 0L);
             }
-            List<Map<String, List<Integer>>> mpu = new ArrayList<>();
             Map<String, Integer> fabricantesConsumo = new HashMap<>();
             for (String manufacturer : manufacturers) {
                 fabricantesConsumo.put(manufacturer, 0);
             }
+            Map<String, Integer> marcasUsos = new HashMap<>();
+            for (String brand : brands) {
+                marcasUsos.put(brand, 0);
+            }
+            Map<String, Long> marcasVisualizacion = new HashMap<>();
+            for (String brand : brands) {
+                marcasVisualizacion.put(brand, 0L);
+            }
+            Map<String, Integer> marcasConsumo = new HashMap<>();
+            for (String brand : brands) {
+                marcasConsumo.put(brand, 0);
+            }
+            Map<String, Integer> avsUsos = new HashMap<>();
+            for (String version : versions) {
+                avsUsos.put(version, 0);
+            }
+            Map<String, Long> avsVisualizacion = new HashMap<>();
+            for (String version : versions) {
+                avsVisualizacion.put(version, 0L);
+            }
+            Map<String, Integer> avsConsumo = new HashMap<>();
+            for (String version : versions) {
+                avsConsumo.put(version, 0);
+            }
 
             for (int i = 0; i < escaneo.size(); i++) {
+                tvu += escaneo.get(i).size();
                 vspu.add(new HashMap<>());
                 for (String vsAppName : vsAppsNames) {
                     vspu.get(i).put(vsAppName, new ArrayList<>());
                 }
+                fabricantesUsos.put(info.get(i).get(0), fabricantesUsos.get(info.get(i).get(0)) + escaneo.get(i).size());
+                marcasUsos.put(info.get(i).get(1), marcasUsos.get(info.get(i).get(1)) + escaneo.get(i).size());
+                avsUsos.put(info.get(i).get(3), avsUsos.get(info.get(i).get(3)) + escaneo.get(i).size());
                 int id = 1;
                 for (List<Object> s : escaneo.get(i)) {
-                    tec += (Integer) s.get(3);
                     ttv += (Long) s.get(2);
+                    tec += (Integer) s.get(3);
                     appsVistas.put((String) s.get(5), appsVistas.get((String) s.get(5)) + 1);
                     appsUso.put((String) s.get(5), appsUso.get((String) s.get(5)) + (Long) s.get(2));
-                    vspu.get(i).get((String) s.get(5)).add(id);
                     appsConsumo.put((String) s.get(5), appsConsumo.get((String) s.get(5)) + (Integer) s.get(3));
+                    vspu.get(i).get((String) s.get(5)).add(id);
+                    fabricantesVisualizacion.put(info.get(i).get(0), fabricantesVisualizacion.get(info.get(i).get(0)) + (Long) s.get(2));
+                    fabricantesConsumo.put(info.get(i).get(0), fabricantesConsumo.get(info.get(i).get(0)) + (Integer) s.get(3));
+                    marcasVisualizacion.put(info.get(i).get(1), marcasVisualizacion.get(info.get(i).get(1)) + (Long) s.get(2));
+                    marcasConsumo.put(info.get(i).get(1), marcasConsumo.get(info.get(i).get(1)) + (Integer) s.get(3));
+                    avsVisualizacion.put(info.get(i).get(3), avsVisualizacion.get(info.get(i).get(3)) + (Long) s.get(2));
+                    avsConsumo.put(info.get(i).get(3), avsConsumo.get(info.get(i).get(3)) + (Integer) s.get(3));
                     id++;
                 }
             }
 
-            int totalEnergiaConsumida = tec;
-            runOnUiThread(() -> tv.append("\n\nTotal de Energia Consumida: " + totalEnergiaConsumida + " uAh"));
+            int totalVecesUsado = tvu;
+            runOnUiThread(() -> tv.append("\n\nTotal de Veces Usada: " + totalVecesUsado));
 
             long totalTiempoVisualizado = ttv/(1000*60*60);
             runOnUiThread(() -> tv.append("\n\nTotal de Tiempo Visualizado: " + totalTiempoVisualizado + " h"));
 
-            Map.Entry<String, Integer> appMasVista = Collections.max(appsVistas.entrySet(), Map.Entry.comparingByValue());
-            runOnUiThread(() -> tv.append("\n\nApp de VS Mas Veces Vista: " + appMasVista.getKey()));
-            runOnUiThread(() -> tv.append("\nNo. de Veces Vista: " + appMasVista.getValue()));
+            int totalEnergiaConsumida = tec;
+            runOnUiThread(() -> tv.append("\n\nTotal de Energia Consumida: " + totalEnergiaConsumida + " uAh"));
 
-            Map.Entry<String, Long> appMasUsada = Collections.max(appsUso.entrySet(), Map.Entry.comparingByValue());
-            runOnUiThread(() -> tv.append("\n\nApp Mas Tiempo Usada: " + appMasUsada.getKey()));
-            runOnUiThread(() -> tv.append("\nTiempo Usada: " + appMasUsada.getValue()/(1000*60*60) + " h"));
-
+            float thc = 0;
             Map<String, Float> appsCO2 = new HashMap<>();
             for (String vsAppName : vsAppsNames) {
                 appsCO2.put(vsAppName, 0F);
             }
+            Map<String, Float> fabricantesCO2 = new HashMap<>();
+            for (String manufacturer : manufacturers) {
+                fabricantesCO2.put(manufacturer, 0F);
+            }
+            Map<String, Float> marcasCO2 = new HashMap<>();
+            for (String brand : brands) {
+                marcasCO2.put(brand, 0F);
+            }
+            Map<String, Float> avsCO2 = new HashMap<>();
+            for (String version : versions) {
+                avsCO2.put(version, 0F);
+            }
+
             for (int i = 0; i < huella.size(); i++) {
                 for (List<Object> h : huella.get(i)) {
+                    thc += (Float) h.get(1);
+                    fabricantesCO2.put(info.get(i).get(0), fabricantesCO2.get(info.get(i).get(0)) + (Float) h.get(1));
+                    marcasCO2.put(info.get(i).get(1), marcasCO2.get(info.get(i).get(0)) + (Float) h.get(1));
+                    avsCO2.put(info.get(i).get(3), avsCO2.get(info.get(i).get(0)) + (Float) h.get(1));
                     for (String vs : vspu.get(i).keySet()) {
                         if (vspu.get(i).get(vs).contains((Integer) h.get(0))) {
                             appsCO2.put(vs, appsCO2.get(vs) + (Float) h.get(1));
@@ -258,13 +296,24 @@ public class ThirdActivity extends AppCompatActivity {
                 }
             }
 
-            Map.Entry<String, Float> appMayorCO2 = Collections.max(appsCO2.entrySet(), Map.Entry.comparingByValue());
-            runOnUiThread(() -> tv.append("\n\napp que Generó una Mayor Huella de Carbono: " + appMayorCO2.getKey()));
-            runOnUiThread(() -> tv.append("\nHuella de Carbono: " + appMayorCO2.getValue() + "gCO2e"));
+            float totalHuellaCarbono = thc;
+            runOnUiThread(() -> tv.append("\n\nHuella de Carbono Total Generada: " + totalHuellaCarbono + " gCO2e"));
+
+            Map.Entry<String, Integer> appMasVista = Collections.max(appsVistas.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nApp de VS Mas Veces Vista: " + appMasVista.getKey()));
+            runOnUiThread(() -> tv.append("\nNo. de Veces Vista: " + appMasVista.getValue()));
+
+            Map.Entry<String, Long> appMasUsada = Collections.max(appsUso.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nApp Mas Tiempo Usada: " + appMasUsada.getKey()));
+            runOnUiThread(() -> tv.append("\nTiempo Usada: " + appMasUsada.getValue()/(1000*60*60) + " h"));
 
             Map.Entry<String, Integer> appMayorConsumo = Collections.max(appsConsumo.entrySet(), Map.Entry.comparingByValue());
-            runOnUiThread(() -> tv.append("\n\napp que Consumió la Mayor Cantidad de energía: " + appMayorConsumo.getKey()));
-            runOnUiThread(() -> tv.append("\nenergía Consumida : " + appMayorConsumo.getValue() + " uAh"));
+            runOnUiThread(() -> tv.append("\n\nApp que Consumió la Mayor Cantidad de Energía: " + appMayorConsumo.getKey()));
+            runOnUiThread(() -> tv.append("\nEnergía Consumida : " + appMayorConsumo.getValue() + " uAh"));
+
+            Map.Entry<String, Float> appMayorCO2 = Collections.max(appsCO2.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nApp que Generó una Mayor Huella de Carbono: " + appMayorCO2.getKey()));
+            runOnUiThread(() -> tv.append("\nHuella de Carbono: " + appMayorCO2.getValue() + "gCO2e"));
 
             runOnUiThread(() -> tv.append("\n\nNúmero de Visualizaciones por app:"));
             for (Map.Entry<String, Integer> vistas : appsVistas.entrySet()) {
@@ -276,7 +325,14 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> tv.append("\n\nTiempo de Uso por app:"));
             for (Map.Entry<String, Long> uso : appsUso.entrySet()) {
                 if (uso.getValue() > 0) {
-                    runOnUiThread(() -> tv.append("\n- " + uso.getKey() + ": " + uso.getValue() + " h"));
+                    runOnUiThread(() -> tv.append("\n- " + uso.getKey() + ": " + uso.getValue()/(1000*60*60) + " h"));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nEnergía Consumida por app:"));
+            for (Map.Entry<String, Integer> consumo : appsConsumo.entrySet()) {
+                if (consumo.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + consumo.getKey() + ": " + consumo.getValue() + " uAh"));
                 }
             }
 
@@ -287,14 +343,143 @@ public class ThirdActivity extends AppCompatActivity {
                 }
             }
 
-            runOnUiThread(() -> tv.append("\n\nenergía Consumida por app:"));
-            for (Map.Entry<String, Integer> consumo : appsConsumo.entrySet()) {
+            if (fabricantesUsos.isEmpty()) {
+                return;
+            }
+            Map.Entry<String, Integer> fabricanteMayorUso = Collections.max(fabricantesUsos.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nFabricante de los Dispositivos con Mayor Uso: " + fabricanteMayorUso.getKey()));
+            runOnUiThread(() -> tv.append("\nNo. de Veces Usada: " + fabricanteMayorUso.getValue()));
+
+            Map.Entry<String, Long> fabricanteMayorVisualizacion = Collections.max(fabricantesVisualizacion.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nFabricante de los Dispositivos con Mayor Tiempo Visualizado: " + fabricanteMayorVisualizacion.getKey()));
+            runOnUiThread(() -> tv.append("\nTiempo Usada: " + fabricanteMayorVisualizacion.getValue()/(1000*60*60) + " h"));
+
+            Map.Entry<String, Integer> fabricanteMayorConsumo = Collections.max(fabricantesConsumo.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nFabricante de los Dispositivos que Consumieron la Mayor Cantidad de Energía: " + fabricanteMayorConsumo.getKey()));
+            runOnUiThread(() -> tv.append("\nEnergía Consumida : " + fabricanteMayorConsumo.getValue() + " uAh"));
+
+            Map.Entry<String, Float> fabricanteMayorCO2 = Collections.max(fabricantesCO2.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nFabricante de los Dispositivos que Generaron una Mayor Huella de Carbono: " + fabricanteMayorCO2.getKey()));
+            runOnUiThread(() -> tv.append("\nHuella de Carbono: " + fabricanteMayorCO2.getValue() + "gCO2e"));
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Veces Usada por Fabricante del Dispositivo:"));
+            for (Map.Entry<String, Integer> usos : fabricantesUsos.entrySet()) {
+                if (usos.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + usos.getKey() + ": " + usos.getValue()));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Tiempo Visualizado por Fabricante del Dispositivo:"));
+            for (Map.Entry<String, Long> visualizado : fabricantesVisualizacion.entrySet()) {
+                if (visualizado.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + visualizado.getKey() + ": " + visualizado.getValue()/(1000*60*60) + " h"));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Energía Consumida por Fabricante del Dispositivo:"));
+            for (Map.Entry<String, Integer> consumo : fabricantesConsumo.entrySet()) {
                 if (consumo.getValue() > 0) {
                     runOnUiThread(() -> tv.append("\n- " + consumo.getKey() + ": " + consumo.getValue() + " uAh"));
                 }
             }
 
+            runOnUiThread(() -> tv.append("\n\nTotal de Huella de Carbono Generada por Fabricante del Dispositivo:"));
+            for (Map.Entry<String, Float> co2 : fabricantesCO2.entrySet()) {
+                if (co2.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + co2.getKey() + ": " + co2.getValue() + " gCo2e"));
+                }
+            }
 
+            Map.Entry<String, Integer> marcaMayorUso = Collections.max(marcasUsos.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nMarca de los dispositivos con Mayor Uso: " + marcaMayorUso.getKey()));
+            runOnUiThread(() -> tv.append("\nNo. de Veces Usada: " + marcaMayorUso.getValue()));
+
+            Map.Entry<String, Long> marcaMayorVisualizacion = Collections.max(marcasVisualizacion.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nMarca de los dispositivos con Mayor Tiempo Visualizado: " + marcaMayorVisualizacion.getKey()));
+            runOnUiThread(() -> tv.append("\nTiempo Usada: " + marcaMayorVisualizacion.getValue()/(1000*60*60) + " h"));
+
+            Map.Entry<String, Integer> marcaMayorConsumo = Collections.max(marcasConsumo.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nMarca de los Dispositivos que Consumieron la Mayor Cantidad de Energía: " + marcaMayorConsumo.getKey()));
+            runOnUiThread(() -> tv.append("\nEnergía Consumida : " + marcaMayorConsumo.getValue() + " uAh"));
+
+            Map.Entry<String, Float> marcaMayorCO2 = Collections.max(marcasCO2.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nMarca de los Dispositivos que Generaron una Mayor Huella de Carbono: " + marcaMayorCO2.getKey()));
+            runOnUiThread(() -> tv.append("\nHuella de Carbono: " + marcaMayorCO2.getValue() + "gCO2e"));
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Veces Usada por Marca del Dispositivo:"));
+            for (Map.Entry<String, Integer> usos : marcasUsos.entrySet()) {
+                if (usos.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + usos.getKey() + ": " + usos.getValue()));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Tiempo Visualizado por Marca del Dispositivo:"));
+            for (Map.Entry<String, Long> visualizado : marcasVisualizacion.entrySet()) {
+                if (visualizado.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + visualizado.getKey() + ": " + visualizado.getValue()/(1000*60*60) + " h"));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Energía Consumida por Marca del Dispositivo:"));
+            for (Map.Entry<String, Integer> consumo : marcasConsumo.entrySet()) {
+                if (consumo.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + consumo.getKey() + ": " + consumo.getValue() + " uAh"));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Huella de Carbono Generada por Marca del Dispositivo:"));
+            for (Map.Entry<String, Float> co2 : marcasCO2.entrySet()) {
+                if (co2.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + co2.getKey() + ": " + co2.getValue() + " gCo2e"));
+                }
+            }
+
+            Map.Entry<String, Integer> avMayorUso = Collections.max(avsUsos.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nVersión de Android de los dispositivos con Mayor Uso: " + avMayorUso.getKey()));
+            runOnUiThread(() -> tv.append("\nNo. de Veces Usada: " + avMayorUso.getValue()));
+
+            Map.Entry<String, Long> avMayorVisualizacion = Collections.max(avsVisualizacion.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nVersión de Android de los dispositivos con Mayor Tiempo Visualizado: " + avMayorVisualizacion.getKey()));
+            runOnUiThread(() -> tv.append("\nTiempo Usada: " + avMayorVisualizacion.getValue()/(1000*60*60) + " h"));
+
+            Map.Entry<String, Integer> avMayorConsumo = Collections.max(avsConsumo.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nVersión de Android de los Dispositivos que Consumieron la Mayor Cantidad de Energía: " + avMayorConsumo.getKey()));
+            runOnUiThread(() -> tv.append("\nEnergía Consumida : " + avMayorConsumo.getValue() + " uAh"));
+
+            Map.Entry<String, Float> avMayorCO2 = Collections.max(avsCO2.entrySet(), Map.Entry.comparingByValue());
+            runOnUiThread(() -> tv.append("\n\nMarca de los Dispositivos que Generaron una Mayor Huella de Carbono: " + avMayorCO2.getKey()));
+            runOnUiThread(() -> tv.append("\nHuella de Carbono: " + avMayorCO2.getValue() + "gCO2e"));
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Veces Usada por Versión de Android del Dispositivo:"));
+            for (Map.Entry<String, Integer> usos : avsUsos.entrySet()) {
+                if (usos.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + usos.getKey() + ": " + usos.getValue()));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Tiempo Visualizado por Versión de Android del Dispositivo:"));
+            for (Map.Entry<String, Long> visualizado : avsVisualizacion.entrySet()) {
+                if (visualizado.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + visualizado.getKey() + ": " + visualizado.getValue()/(1000*60*60) + " h"));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Energía Consumida por Versión de Android del Dispositivo:"));
+            for (Map.Entry<String, Integer> consumo : avsConsumo.entrySet()) {
+                if (consumo.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + consumo.getKey() + ": " + consumo.getValue() + " uAh"));
+                }
+            }
+
+            runOnUiThread(() -> tv.append("\n\nTotal de Huella de Carbono Generada por Versión de Android del Dispositivo:"));
+            for (Map.Entry<String, Float> co2 : avsCO2.entrySet()) {
+                if (co2.getValue() > 0) {
+                    runOnUiThread(() -> tv.append("\n- " + co2.getKey() + ": " + co2.getValue() + " gCo2e"));
+                }
+            }
+
+            // Imprimir info por usuario:
+            
 
         }).start());
     }
