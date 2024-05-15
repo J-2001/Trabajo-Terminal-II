@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="netflix">#E30B14</color>
+    <color name="disneyplus">#0C8798</color>
+    <color name="starplus">#241C44</color>
+    <color name="primevideo">#33689B</color>
+    <color name="max">#042EEE</color>
+    <color name="crunchyroll">#EE6B05</color>
+    <color name="vix">#FB6762</color>
 </resources>
