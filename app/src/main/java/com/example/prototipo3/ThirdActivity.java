@@ -2,16 +2,25 @@ package com.example.prototipo3;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.FileProvider;
 
+import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.image.charts.ImageCharts;
 
 import java.io.BufferedInputStream;
@@ -33,7 +42,7 @@ public class ThirdActivity extends AppCompatActivity {
 
     private final int textSize = 11;
     private String[] vsAppsNames;
-    private String chartSize = "400x400";
+    private String chartSize = "600x600";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,7 +201,33 @@ public class ThirdActivity extends AppCompatActivity {
                 }
             }
 
+            PdfDocument pdfDocument = new PdfDocument();
+
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(612, 792, 1).create(); // Carta (612x792)
+
+            Paint images = new Paint();
+
+            Paint titles = new Paint();
+            titles.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+            titles.setTextSize(13);
+            titles.setColor(getColor(R.color.black));
+
+            Paint text = new Paint();
+            text.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+            titles.setTextSize(12);
+            titles.setColor(getColor(R.color.black));
+
+            final boolean[] open = {true};
+
+            PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+
+            Canvas canvas = page.getCanvas();
+
+            int x = 0;
+            int y = 12;
+
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nNo. Dispositivos Registrados: " + info.size()));
+            canvas.drawText("\n\nwwwNo. Dispositivos Registrados: " + info.size(), x, y, text);
 
             int tvu = 0;
             long ttv = 0;
@@ -276,12 +311,18 @@ public class ThirdActivity extends AppCompatActivity {
 
             int totalVecesUsado = tvu;
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada: " + totalVecesUsado));
+            y += 12;
+            canvas.drawText("\n\nTotal de Veces Usada: " + totalVecesUsado, x, y, text);
 
             long totalTiempoVisualizado = ttv/(1000*60*60);
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Tiempo Visualizado: " + totalTiempoVisualizado + " h"));
+            y += 12;
+            canvas.drawText("\n\nTotal de Tiempo Visualizado: " + totalTiempoVisualizado + " h", x, y, text);
 
             int totalEnergiaConsumida = tec;
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Energia Consumida: " + totalEnergiaConsumida + " uAh"));
+            y += 12;
+            canvas.drawText("\n\nTotal de Energia Consumida: " + totalEnergiaConsumida + " uAh", x, y, text);
 
             float thc = 0;
             Map<String, Float> appsCO2 = new HashMap<>();
@@ -318,6 +359,9 @@ public class ThirdActivity extends AppCompatActivity {
 
             float totalHuellaCarbono = thc;
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nHuella de Carbono Total Generada: " + totalHuellaCarbono + " gCO2e"));
+            y += 12;
+            canvas.drawText("\n\nHuella de Carbono Total Generada: " + totalHuellaCarbono + " gCO2e", x, y, text);
+            pdfDocument.finishPage(page);
 
             Map.Entry<String, Integer> appMasVista = Collections.max(appsVistas.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp de VS Mas Veces Vista: " + appMasVista.getKey()));
@@ -359,8 +403,8 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nNúmero de Visualizaciones por App:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                //imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
+                //imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_01));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -399,8 +443,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTiempo de Uso por App:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_02));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -439,8 +481,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nEnergía Consumida por App:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_03));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -479,8 +519,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nHuella de Carbono por App:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_04));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -494,6 +532,36 @@ public class ThirdActivity extends AppCompatActivity {
             textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
             textViews.get(textViews.size()-1).setText("");
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
+
+            Button button = new Button(this);
+            button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            button.setTextSize(11);
+            button.setText("Descargar PDF!");
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        File pdf = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), "Reporte.pdf");
+                        if (open[0]) {
+                            if (pdf.exists()) {
+                                pdf.delete();
+                            }
+                            pdfDocument.writeTo(new FileOutputStream(pdf));
+                            pdfDocument.close();
+                            open[0] = false;
+                            Snackbar snackbar = Snackbar.make(coordinatorLayout, "PDF Creado!", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
+                        }
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", pdf), "application/pdf");
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        Log.e("Error al Generar el PDF!", e.toString());
+                    }
+                }
+            });
+            runOnUiThread(() -> linearLayout.addView(button));
 
             if (fabricantesUsos.isEmpty()) {
                 return;
@@ -537,8 +605,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Fabricante del Dispositivo:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_05));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -576,8 +642,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Tiempo Visualizado por Fabricante del Dispositivo:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_06));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -615,8 +679,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Energía Consumida por Fabricante del Dispositivo:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_07));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -654,8 +716,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Huella de Carbono Generada por Fabricante del Dispositivo:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_08));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -709,8 +769,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Marca del Dispositivo:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_09));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -748,8 +806,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Tiempo Visualizado por Marca del Dispositivo:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_10));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -787,8 +843,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Energía Consumida por Marca del Dispositivo:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_11));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -826,8 +880,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Huella de Carbono Generada por Marca del Dispositivo:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_12));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -881,8 +933,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Versión de Android del Dispositivo:"));
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
-                imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_13));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
             } catch (Exception e) {
@@ -897,34 +947,123 @@ public class ThirdActivity extends AppCompatActivity {
             textViews.get(textViews.size()-1).setText("");
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
-            /*
-            runOnUiThread(() -> tv.append("\n\nTotal de Tiempo Visualizado por Versión de Android del Dispositivo:"));
-            for (Map.Entry<String, Long> visualizado : avsVisualizacion.entrySet()) {
-                if (visualizado.getValue() > 0) {
-                    runOnUiThread(() -> tv.append("\n- " + visualizado.getKey() + ": " + visualizado.getValue()/(1000*60*60) + " h"));
+            try {
+                File chart_14 = File.createTempFile("chart14_", ".png", getCacheDir());
+                ImageCharts chart14 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                for (Map.Entry<String, Long> visualizado : avsVisualizacion.entrySet()) {
+                    d.add(String.valueOf(visualizado.getValue()));
+                    l.add(visualizado.getKey());
                 }
+                chart14.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                URL url = new URL(chart14.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_14);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Tiempo Visualizado por Versión de Android del Dispositivo:"));
+                imageViews.add(new ImageView(this));
+                imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_14));
+                runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
+            } catch (Exception e) {
+                Log.e("Error(14): ", e.toString());
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nError al Generar el Chart 14!!!"));
             }
 
-            runOnUiThread(() -> tv.append("\n\nTotal de Energía Consumida por Versión de Android del Dispositivo:"));
-            for (Map.Entry<String, Integer> consumo : avsConsumo.entrySet()) {
-                if (consumo.getValue() > 0) {
-                    runOnUiThread(() -> tv.append("\n- " + consumo.getKey() + ": " + consumo.getValue() + " uAh"));
+            textViews.add(new TextView(this));
+            textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            textViews.get(textViews.size()-1).setTextSize(textSize);
+            textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+            textViews.get(textViews.size()-1).setText("");
+            runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
+
+            try {
+                File chart_15 = File.createTempFile("chart15_", ".png", getCacheDir());
+                ImageCharts chart15 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                for (Map.Entry<String, Integer> consumo : avsConsumo.entrySet()) {
+                    d.add(String.valueOf(consumo.getValue()));
+                    l.add(consumo.getKey());
                 }
+                chart15.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                URL url = new URL(chart15.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_15);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Energía Consumida por Versión de Android del Dispositivo:"));
+                imageViews.add(new ImageView(this));
+                imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_15));
+                runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
+            } catch (Exception e) {
+                Log.e("Error(15): ", e.toString());
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nError al Generar el Chart 15!!!"));
             }
 
-            runOnUiThread(() -> tv.append("\n\nTotal de Huella de Carbono Generada por Versión de Android del Dispositivo:"));
-            for (Map.Entry<String, Float> co2 : avsCO2.entrySet()) {
-                if (co2.getValue() > 0) {
-                    runOnUiThread(() -> tv.append("\n- " + co2.getKey() + ": " + co2.getValue() + " gCo2e"));
+            textViews.add(new TextView(this));
+            textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            textViews.get(textViews.size()-1).setTextSize(textSize);
+            textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+            textViews.get(textViews.size()-1).setText("");
+            runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
+
+            try {
+                File chart_16 = File.createTempFile("chart16_", ".png", getCacheDir());
+                ImageCharts chart16 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                for (Map.Entry<String, Float> co2 : avsCO2.entrySet()) {
+                    d.add(String.valueOf(co2.getValue()));
+                    l.add(co2.getKey());
                 }
+                chart16.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                URL url = new URL(chart16.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_16);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Huella de Carbono Generada por Versión de Android del Dispositivo:"));
+                imageViews.add(new ImageView(this));
+                imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_16));
+                runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
+            } catch (Exception e) {
+                Log.e("Error(16): ", e.toString());
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nError al Generar el Chart 16!!!"));
             }
-/*
-            runOnUiThread(() -> tv.append("\n\n\n - - - Usuarios: - - -"));
-            runOnUiThread(() -> tv.append("\n\n\n - - - - - - - - - - - -"));
+
+            textViews.add(new TextView(this));
+            textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            textViews.get(textViews.size()-1).setTextSize(textSize);
+            textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+            textViews.get(textViews.size()-1).setText("");
+            runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
+
+            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\n\n - - - Usuarios: - - -"));
+            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\n\n - - - - - - - - - - - -"));
 
             for (int i = 0; i < info.size(); i++) {
                 int u_totalVecesUsado = escaneo.get(i).size();
-                runOnUiThread(() -> tv.append("\n\nTotal de Veces Usada: " + u_totalVecesUsado));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada: " + u_totalVecesUsado));
 
                 long u_ttv = 0;
                 int u_tec = 0;
@@ -956,10 +1095,10 @@ public class ThirdActivity extends AppCompatActivity {
                 }
 
                 long u_totalTiempoVisualizado = u_ttv/(1000*60*60);
-                runOnUiThread(() -> tv.append("\n\nTotal de Tiempo Visualizado: " + u_totalTiempoVisualizado + " h"));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Tiempo Visualizado: " + u_totalTiempoVisualizado + " h"));
 
                 int u_totalEnergiaConsumida = u_tec;
-                runOnUiThread(() -> tv.append("\n\nTotal de Energia Consumida: " + u_totalEnergiaConsumida + " uAh"));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Energia Consumida: " + u_totalEnergiaConsumida + " uAh"));
 
                 float u_thc = 0;
                 Map<String, Float> u_appsCO2 = new HashMap<>();
@@ -978,54 +1117,175 @@ public class ThirdActivity extends AppCompatActivity {
                 }
 
                 float u_totalHuellaCarbono = u_thc;
-                runOnUiThread(() -> tv.append("\n\nHuella de Carbono Total Generada: " + u_totalHuellaCarbono + " gCO2e"));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nHuella de Carbono Total Generada: " + u_totalHuellaCarbono + " gCO2e"));
 
                 Map.Entry<String, Integer> u_appMasVista = Collections.max(u_appsVistas.entrySet(), Map.Entry.comparingByValue());
-                runOnUiThread(() -> tv.append("\n\nApp de VS Mas Veces Vista: " + u_appMasVista.getKey()));
-                runOnUiThread(() -> tv.append("\nNo. de Veces Vista: " + u_appMasVista.getValue()));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp de VS Mas Veces Vista: " + u_appMasVista.getKey()));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Vista: " + u_appMasVista.getValue()));
 
                 Map.Entry<String, Long> u_appMasUsada = Collections.max(u_appsUso.entrySet(), Map.Entry.comparingByValue());
-                runOnUiThread(() -> tv.append("\n\nApp Mas Tiempo Usada: " + u_appMasUsada.getKey()));
-                runOnUiThread(() -> tv.append("\nTiempo Usada: " + u_appMasUsada.getValue()/(1000*60*60) + " h"));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp Mas Tiempo Usada: " + u_appMasUsada.getKey()));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo Usada: " + u_appMasUsada.getValue()/(1000*60*60) + " h"));
 
                 Map.Entry<String, Integer> u_appMayorConsumo = Collections.max(u_appsConsumo.entrySet(), Map.Entry.comparingByValue());
-                runOnUiThread(() -> tv.append("\n\nApp que Consumió la Mayor Cantidad de Energía: " + u_appMayorConsumo.getKey()));
-                runOnUiThread(() -> tv.append("\nEnergía Consumida : " + u_appMayorConsumo.getValue() + " uAh"));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp que Consumió la Mayor Cantidad de Energía: " + u_appMayorConsumo.getKey()));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida : " + u_appMayorConsumo.getValue() + " uAh"));
 
                 Map.Entry<String, Float> u_appMayorCO2 = Collections.max(u_appsCO2.entrySet(), Map.Entry.comparingByValue());
-                runOnUiThread(() -> tv.append("\n\nApp que Generó una Mayor Huella de Carbono: " + u_appMayorCO2.getKey()));
-                runOnUiThread(() -> tv.append("\nHuella de Carbono: " + u_appMayorCO2.getValue() + " gCO2e"));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp que Generó una Mayor Huella de Carbono: " + u_appMayorCO2.getKey()));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono: " + u_appMayorCO2.getValue() + " gCO2e"));
 
-                runOnUiThread(() -> tv.append("\n\nNúmero de Visualizaciones por app:"));
-                for (Map.Entry<String, Integer> vistas : u_appsVistas.entrySet()) {
-                    if (vistas.getValue() > 0) {
-                        runOnUiThread(() -> tv.append("\n- " + vistas.getKey() + ": " + vistas.getValue()));
+                try {
+                    File u_chart_01 = File.createTempFile("u_chart01_", ".png", getCacheDir());
+                    ImageCharts u_chart01 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                    List<String> d = new ArrayList<>();
+                    List<String> l = new ArrayList<>();
+                    for (Map.Entry<String, Integer> vistas : u_appsVistas.entrySet()) {
+                        d.add(String.valueOf(vistas.getValue()));
+                        l.add(vistas.getKey());
                     }
+                    u_chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                    URL url = new URL(u_chart01.toURL());
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(u_chart_01);
+                    byte[] b = new byte[1024];
+                    int nRead;
+                    while ((nRead = is.read(b)) != -1) {
+                        os.write(b, 0, nRead);
+                    }
+                    is.close();
+                    os.close();
+                    runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nNúmero de Visualizaciones por app:"));
+                    imageViews.add(new ImageView(this));
+                    imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_01));
+                    runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
+                } catch (Exception e) {
+                    Log.e("Error(u_01): ", e.toString());
+                    runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nError al Generar el Chart u_01!!!"));
                 }
 
-                runOnUiThread(() -> tv.append("\n\nTiempo de Uso por app:"));
-                for (Map.Entry<String, Long> uso : u_appsUso.entrySet()) {
-                    if (uso.getValue() > 0) {
-                        runOnUiThread(() -> tv.append("\n- " + uso.getKey() + ": " + uso.getValue()/(1000*60*60) + " h"));
+                textViews.add(new TextView(this));
+                textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                textViews.get(textViews.size()-1).setTextSize(textSize);
+                textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+                textViews.get(textViews.size()-1).setText("");
+                runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
+
+                try {
+                    File u_chart_02 = File.createTempFile("u_chart02_", ".png", getCacheDir());
+                    ImageCharts u_chart02 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                    List<String> d = new ArrayList<>();
+                    List<String> l = new ArrayList<>();
+                    for (Map.Entry<String, Long> uso : u_appsUso.entrySet()) {
+                        d.add(String.valueOf(uso.getValue()));
+                        l.add(uso.getKey());
                     }
+                    u_chart02.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                    URL url = new URL(u_chart02.toURL());
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(u_chart_02);
+                    byte[] b = new byte[1024];
+                    int nRead;
+                    while ((nRead = is.read(b)) != -1) {
+                        os.write(b, 0, nRead);
+                    }
+                    is.close();
+                    os.close();
+                    runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTiempo de Uso por app:"));
+                    imageViews.add(new ImageView(this));
+                    imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_02));
+                    runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
+                } catch (Exception e) {
+                    Log.e("Error(u_02): ", e.toString());
+                    runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nError al Generar el Chart u_02!!!"));
                 }
 
-                runOnUiThread(() -> tv.append("\n\nEnergía Consumida por app:"));
-                for (Map.Entry<String, Integer> consumo : u_appsConsumo.entrySet()) {
-                    if (consumo.getValue() > 0) {
-                        runOnUiThread(() -> tv.append("\n- " + consumo.getKey() + ": " + consumo.getValue() + " uAh"));
+                textViews.add(new TextView(this));
+                textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                textViews.get(textViews.size()-1).setTextSize(textSize);
+                textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+                textViews.get(textViews.size()-1).setText("");
+                runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
+
+                try {
+                    File u_chart_03 = File.createTempFile("u_chart03_", ".png", getCacheDir());
+                    ImageCharts u_chart03 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                    List<String> d = new ArrayList<>();
+                    List<String> l = new ArrayList<>();
+                    for (Map.Entry<String, Integer> consumo : u_appsConsumo.entrySet()) {
+                        d.add(String.valueOf(consumo.getValue()));
+                        l.add(consumo.getKey());
                     }
+                    u_chart03.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                    URL url = new URL(u_chart03.toURL());
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(u_chart_03);
+                    byte[] b = new byte[1024];
+                    int nRead;
+                    while ((nRead = is.read(b)) != -1) {
+                        os.write(b, 0, nRead);
+                    }
+                    is.close();
+                    os.close();
+                    runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nEnergía Consumida por app:"));
+                    imageViews.add(new ImageView(this));
+                    imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_03));
+                    runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
+                } catch (Exception e) {
+                    Log.e("Error(u_03): ", e.toString());
+                    runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nError al Generar el Chart u_03!!!"));
                 }
 
-                runOnUiThread(() -> tv.append("\n\nHuella de Carbono por app:"));
-                for (Map.Entry<String, Float> co2 : u_appsCO2.entrySet()) {
-                    if (co2.getValue() > 0) {
-                        runOnUiThread(() -> tv.append("\n- " + co2.getKey() + ": " + co2.getValue() + " gCo2e"));
+                textViews.add(new TextView(this));
+                textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                textViews.get(textViews.size()-1).setTextSize(textSize);
+                textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+                textViews.get(textViews.size()-1).setText("");
+                runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
+
+                try {
+                    File u_chart_04 = File.createTempFile("u_chart04_", ".png", getCacheDir());
+                    ImageCharts u_chart04 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                    List<String> d = new ArrayList<>();
+                    List<String> l = new ArrayList<>();
+                    for (Map.Entry<String, Float> co2 : u_appsCO2.entrySet()) {
+                        d.add(String.valueOf(co2.getValue()));
+                        l.add(co2.getKey());
                     }
+                    u_chart04.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                    URL url = new URL(u_chart04.toURL());
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(u_chart_04);
+                    byte[] b = new byte[1024];
+                    int nRead;
+                    while ((nRead = is.read(b)) != -1) {
+                        os.write(b, 0, nRead);
+                    }
+                    is.close();
+                    os.close();
+                    runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nHuella de Carbono por app:"));
+                    imageViews.add(new ImageView(this));
+                    imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_04));
+                    runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
+                } catch (Exception e) {
+                    Log.e("Error(u_04): ", e.toString());
+                    runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nError al Generar el Chart u_04!!!"));
                 }
 
-                runOnUiThread(() -> tv.append("\n\n\n - - - - - - - - - - - -\n"));
-            }*/
+                textViews.add(new TextView(this));
+                textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                textViews.get(textViews.size()-1).setTextSize(textSize);
+                textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+                textViews.get(textViews.size()-1).setText("\n\n\n - - - - - - - - - - - -\n");
+                runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
+            }
+
+            // Button
+
         }).start());
     }
 
