@@ -33,11 +33,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ThirdActivity extends AppCompatActivity {
@@ -55,6 +58,8 @@ public class ThirdActivity extends AppCompatActivity {
         videoStreaming.put(getString(R.string.max), getString(R.color.max).substring(3));
         videoStreaming.put(getString(R.string.crunchyroll), getString(R.color.crunchyroll).substring(3));
         videoStreaming.put(getString(R.string.vix), getString(R.color.vix).substring(3));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM", Locale.forLanguageTag("es-MX"));
 
         String chartSize = "400x400";
 
@@ -602,21 +607,63 @@ public class ThirdActivity extends AppCompatActivity {
             try {
                 File u_chart_05 = File.createTempFile("u_chart05_", ".png", getCacheDir());
                 ImageCharts u_chart05 = new ImageCharts().cht("lxy").chs("800x800").chof(".png");
-                List<String> dx = new ArrayList<>();
-                List<String> dy = new ArrayList<>();
+                List<Long> dx = new ArrayList<>();
+                List<Integer> dy = new ArrayList<>();
                 /*for (List<Object> row : bateria.get(i)) {
-                    dx.add(String.valueOf((Long) row.get(4)));
-                    dy.add(String.valueOf((Integer) row.get(0)));
+                    dx.add((Long) row.get(4));
+                    dy.add((Integer) row.get(0));
                 }*/
-                dx.add(String.valueOf(1715818369010L));
-                dy.add(String.valueOf(123409));
-                dx.add(String.valueOf(1715818371000L));
-                dy.add(String.valueOf(213409));
-                dx.add(String.valueOf(1715818439010L));
-                dy.add(String.valueOf(113409));
-                dx.add(String.valueOf(1715818498010L));
-                dy.add(String.valueOf(83409));
-                u_chart05.chd("t:" + String.join(",", dx) + "|" + String.join(",", dy)).chxr("1," + dx.get(0) + "," + dx.get(3)).chdl("Flujo de la Bateria");
+                dx.add(1715532219672L);
+                dy.add(123409);
+                dx.add(1715632219672L);
+                dy.add(213409);
+                dx.add(1715732219672L);
+                dy.add(113409);
+                dx.add(1715832219672L);
+                dy.add(83409);
+                long startx = dx.get(0);
+                long endx = dx.get(dx.size()-1);
+                long xlimit = endx - startx;
+                int starty = Collections.min(dy);
+                int endy = Collections.max(dy);
+                int ylimit = endy - starty;
+                List<String> xl = new ArrayList<>();
+                for (long l = 0; l <= xlimit; l += Math.round(xlimit/5.0)) {
+                    xl.add(sdf.format(new Date(startx + l)));
+                }
+                List<String> yl = new ArrayList<>();
+                for (int i = 0; i <= ylimit; i += Math.round(ylimit/7)) {
+                    yl.add(String.valueOf(starty + i));
+                }
+                List<String> dxn = new ArrayList<>();
+                for (Long l : dx) {
+                    int t = 4095 - Math.round((endx - l) * 4095 / xlimit);
+                    dxn.add(String.valueOf(t));
+                }
+                int startyn = 0;
+                int endyn = 0;
+                List<String> dyn = new ArrayList<>();
+                for (Integer i : dy) {
+                    int t = 4095 - Math.round((endy - i) * 4095 / ylimit);
+                    dyn.add(String.valueOf(t));
+                    if (i == starty) {
+                        startyn = t;
+                    }
+                    if (i == endy) {
+                        endyn = t;
+                    }
+                }
+                List<Integer> prueba = new ArrayList<>();
+                prueba.add(90);
+                prueba.add(1000);
+                prueba.add(2700);
+                prueba.add(3500);
+                prueba.add(3968);
+                prueba.add(1100);
+                prueba.add(250);
+                Log.i("Prueba(EEF): ", extendedEncodingFormat(prueba));
+                u_chart05.chd("t:" + String.join(",", dxn) + "|" + String.join(",", dyn)).chxr("0," + startyn + "," + endyn + "|1," + dxn.get(0) + "," + dxn.get(dxn.size()-1));
+                u_chart05.chxt("y,x").chxl("0:|" + String.join("|", yl) + "|1:|" + String.join("|", xl));
                 URL url = new URL(u_chart05.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(u_chart_05);
@@ -1639,4 +1686,83 @@ public class ThirdActivity extends AppCompatActivity {
             return "0";
         }
     }
+
+    public String extendedEncodingFormat(List<Integer> points) {
+        String eef = "";
+        for (int point : points) {
+            if (point < 1664) {
+                eef += (char)(point / 64 + 65);
+                int p = point % 64;
+                if (p < 26) {
+                    eef += (char)(p + 65);
+                } else if (p < 52) {
+                    eef += (char)(p + 71);
+                } else if (p < 62) {
+                    eef += (char)(p - 4);
+                } else if (p == 62) {
+                    eef += "-";
+                } else {
+                    eef += ".";
+                }
+            } else if (point < 3328) {
+                eef += (char)(point / 64 + 71);
+                int p = point % 64;
+                if (p < 26) {
+                    eef += (char)(p + 65);
+                } else if (p < 52) {
+                    eef += (char)(p + 71);
+                } else if (p < 62) {
+                    eef += (char)(p - 4);
+                } else if (p == 62) {
+                    eef += "-";
+                } else {
+                    eef += ".";
+                }
+            } else if (point < 3968) {
+                eef += (char)(point / 64 - 4);
+                int p = point % 64;
+                if (p < 26) {
+                    eef += (char)(p + 65);
+                } else if (p < 52) {
+                    eef += (char)(p + 71);
+                } else if (p < 62) {
+                    eef += (char)(p - 4);
+                } else if (p == 62) {
+                    eef += "-";
+                } else {
+                    eef += ".";
+                }
+            } else if (point < 4032) {
+                eef += "-";
+                int p = point - 3968;
+                if (p < 26) {
+                    eef += (char)(p + 65);
+                } else if (p < 52) {
+                    eef += (char)(p + 71);
+                } else if (p < 62) {
+                    eef += (char)(p - 4);
+                } else if (p == 62) {
+                    eef += "-";
+                } else {
+                    eef += ".";
+                }
+            } else {
+                eef += ".";
+                int p = point - 4032;
+                if (p < 26) {
+                    eef += (char)(p + 65);
+                } else if (p < 52) {
+                    eef += (char)(p + 71);
+                } else if (p < 62) {
+                    eef += (char)(p - 4);
+                } else if (p == 62) {
+                    eef += "-";
+                } else {
+                    eef += ".";
+                }
+            }
+        }
+        return eef;
+    }
+
 }
