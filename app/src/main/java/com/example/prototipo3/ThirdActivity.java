@@ -82,13 +82,6 @@ public class ThirdActivity extends AppCompatActivity {
 
             String[] all = getAllData().split("/");
 
-            textViews.add(new TextView(this));
-            textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            textViews.get(textViews.size()-1).setTextSize(textSize);
-            textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
-            textViews.get(textViews.size()-1).setText(Arrays.toString(all));
-            runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
-
             String[] allInfo = all[0].split("_");
             String[] allData = all[1].split("_");
 
@@ -102,8 +95,12 @@ public class ThirdActivity extends AppCompatActivity {
                 }
             }
 
-            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nInfo: " + ainfo));
-            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nData: " + adata));
+            textViews.add(new TextView(this));
+            textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            textViews.get(textViews.size()-1).setTextSize(textSize);
+            textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+            textViews.get(textViews.size()-1).setText("\nInfo: " + ainfo + "\nData: " + adata);
+            runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             List<List<String>> info = new ArrayList<>();
 
@@ -144,7 +141,9 @@ public class ThirdActivity extends AppCompatActivity {
             }
 
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nBateria: " + bateria));
-
+            if (true) {
+                return;
+            }
             List<List<List<Object>>> analizador = new ArrayList<>();
 
             for (int i = 0; i < data.size(); i++) {
@@ -432,8 +431,7 @@ public class ThirdActivity extends AppCompatActivity {
                     dl.add(vistas.getKey());
                     co.add(videoStreaming.get(vistas.getKey()));
                 }
-                //chart01.chd("a:" + String.join(",", d));
-                chart01.chd("a:2.5,5,8.3").chl(String.join("|", new String[]{"2.5", "5", "8.3"})).chdl(String.join("|", dl)).chco(String.join("|", co));
+                chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chco(String.join("|", co));
                 URL url = new URL(chart01.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_01);
@@ -479,8 +477,7 @@ public class ThirdActivity extends AppCompatActivity {
                     d.add(String.valueOf(uso.getValue()));
                     l.add(uso.getKey());
                 }
-                //chart02.chd("a:" + String.join(",", d));
-                chart02.chd("a:145,37,99").chl(String.join("|", new String[]{"145","37","99"})).chdl(String.join("|", l));
+                chart02.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
                 URL url = new URL(chart02.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_02);
@@ -523,8 +520,7 @@ public class ThirdActivity extends AppCompatActivity {
                     d.add(String.valueOf(consumo.getValue()));
                     l.add(consumo.getKey());
                 }
-                //chart03.chd("a:" + String.join(",", d));
-                chart03.chd("a:1,2,3").chl(String.join("|", new String[]{"1","2","3"})).chdl(String.join("|", l));
+                chart03.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
                 URL url = new URL(chart03.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_03);
@@ -568,8 +564,7 @@ public class ThirdActivity extends AppCompatActivity {
                     d.add(String.valueOf(co2.getValue()));
                     l.add(co2.getKey());
                 }
-                //chart04.chd("a:" + String.join(",", d));
-                chart04.chd("a:99,98,99").chl(String.join("|", new String[]{"99","98","99"})).chdl(String.join("|", l));
+                chart04.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
                 URL url = new URL(chart04.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_04);
@@ -596,7 +591,6 @@ public class ThirdActivity extends AppCompatActivity {
                 pdfDocument.finishPage(page);
             }
 
-            // Flujo de la bateria
             textViews.add(new TextView(this));
             textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             textViews.get(textViews.size()-1).setTextSize(textSize);
@@ -604,122 +598,9 @@ public class ThirdActivity extends AppCompatActivity {
             textViews.get(textViews.size()-1).setText("");
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
-            try {
-                File u_chart_05 = File.createTempFile("u_chart05_", ".png", getCacheDir());
-                ImageCharts u_chart05 = new ImageCharts().cht("lxy").chs("800x800").chof(".png");
-                List<Long> dx = new ArrayList<>();
-                List<Integer> dy = new ArrayList<>();
-                /*for (List<Object> row : bateria.get(i)) {
-                    dx.add((Long) row.get(4));
-                    dy.add((Integer) row.get(0));
-                }*/
-                dx.add(1715532219672L);
-                dy.add(123409);
-                dx.add(1715632219672L);
-                dy.add(213409);
-                dx.add(1715732219672L);
-                dy.add(113409);
-                dx.add(1715832219672L);
-                dy.add(83409);
-                long startx = dx.get(0);
-                long endx = dx.get(dx.size()-1);
-                long xlimit = endx - startx;
-                int starty = Collections.min(dy);
-                int endy = Collections.max(dy);
-                int ylimit = endy - starty;
-                List<String> xl = new ArrayList<>();
-                for (long l = 0; l <= xlimit; l += Math.round(xlimit/5.0)) {
-                    xl.add(sdf.format(new Date(startx + l)));
-                }
-                List<String> yl = new ArrayList<>();
-                for (int i = 0; i <= ylimit; i += Math.round(ylimit/7)) {
-                    yl.add(String.valueOf(starty + i));
-                }
-                List<String> dxn = new ArrayList<>();
-                for (Long l : dx) {
-                    int t = 4095 - Math.round((endx - l) * 4095 / xlimit);
-                    dxn.add(String.valueOf(t));
-                }
-                int startyn = 0;
-                int endyn = 0;
-                List<String> dyn = new ArrayList<>();
-                for (Integer i : dy) {
-                    int t = 4095 - Math.round((endy - i) * 4095 / ylimit);
-                    dyn.add(String.valueOf(t));
-                    if (i == starty) {
-                        startyn = t;
-                    }
-                    if (i == endy) {
-                        endyn = t;
-                    }
-                }
-                List<Integer> prueba = new ArrayList<>();
-                prueba.add(90);
-                prueba.add(1000);
-                prueba.add(2700);
-                prueba.add(3500);
-                prueba.add(3968);
-                prueba.add(1100);
-                prueba.add(250);
-                Log.i("Prueba(EEF): ", extendedEncodingFormat(prueba));
-                u_chart05.chd("t:" + String.join(",", dxn) + "|" + String.join(",", dyn)).chxr("0," + startyn + "," + endyn + "|1," + dxn.get(0) + "," + dxn.get(dxn.size()-1));
-                u_chart05.chxt("y,x").chxl("0:|" + String.join("|", yl) + "|1:|" + String.join("|", xl));
-                URL url = new URL(u_chart05.toURL());
-                InputStream is = url.openStream();
-                OutputStream os = new FileOutputStream(u_chart_05);
-                byte[] b = new byte[1024];
-                int nRead;
-                while ((nRead = is.read(b)) != -1) {
-                    os.write(b, 0, nRead);
-                }
-                is.close();
-                os.close();
-                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nPrueba:"));
-                imageViews.add(new ImageView(this));
-                imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_05));
-                runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-            } catch (Exception e) {
-                Log.e("Error(u_05): ", e.toString());
-            } // Flujo de la bateria
-
-            textViews.add(new TextView(this));
-            textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            textViews.get(textViews.size()-1).setTextSize(textSize);
-            textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
-            textViews.get(textViews.size()-1).setText("");
-            runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
-
-            Button button = new Button(this);
-            button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            button.setTextSize(11);
-            button.setText("Descargar PDF!");
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        File pdf = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), "Reporte.pdf");
-                        if (open[0]) {
-                            pdfDocument.writeTo(new FileOutputStream(pdf));
-                            pdfDocument.close();
-                            open[0] = false;
-                            Snackbar snackbar = Snackbar.make(coordinatorLayout, "PDF Guardado en Descargas!", Snackbar.LENGTH_SHORT);
-                            snackbar.show();
-                        }
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", pdf), "application/pdf");
-                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        Log.e("Error al Generar el PDF!", e.toString());
-                    }
-                }
-            });
-            runOnUiThread(() -> linearLayout.addView(button));
-
-            if (fabricantesUsos.isEmpty()) {
+            /*if (fabricantesUsos.isEmpty()) {
                 return;
-            }
+            }*/
             Map.Entry<String, Integer> fabricanteMayorUso = Collections.max(fabricantesUsos.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nFabricante de los Dispositivos con Mayor Uso: " + fabricanteMayorUso.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Usada: " + fabricanteMayorUso.getValue()));
@@ -1343,6 +1224,93 @@ public class ThirdActivity extends AppCompatActivity {
                 pdfDocument.finishPage(page);
             }
 
+            // Flujo de la bateria
+            textViews.add(new TextView(this));
+            textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            textViews.get(textViews.size()-1).setTextSize(textSize);
+            textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+            textViews.get(textViews.size()-1).setText("");
+            runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
+
+            try {
+                File u_chart_05 = File.createTempFile("u_chart05_", ".png", getCacheDir());
+                ImageCharts u_chart05 = new ImageCharts().cht("lxy").chs("800x800").chof(".png");
+                List<Long> dx = new ArrayList<>();
+                List<Integer> dy = new ArrayList<>();
+                /*for (List<Object> row : bateria.get(i)) {
+                    dx.add((Long) row.get(4));
+                    dy.add((Integer) row.get(0));
+                }*/
+                dx.add(1715532219672L);
+                dy.add(123409);
+                dx.add(1715632219672L);
+                dy.add(213409);
+                dx.add(1715732219672L);
+                dy.add(113409);
+                dx.add(1715832219672L);
+                dy.add(83409);
+                long startx = dx.get(0);
+                long endx = dx.get(dx.size()-1);
+                long xlimit = endx - startx;
+                int starty = Collections.min(dy);
+                int endy = Collections.max(dy);
+                int ylimit = endy - starty;
+                List<String> xl = new ArrayList<>();
+                for (long l = 0; l <= xlimit; l += Math.round(xlimit/5.0)) {
+                    xl.add(sdf.format(new Date(startx + l)));
+                }
+                List<String> yl = new ArrayList<>();
+                for (int i = 0; i <= ylimit; i += Math.round(ylimit/7)) {
+                    yl.add(String.valueOf(starty + i));
+                }
+                List<String> dxn = new ArrayList<>();
+                for (Long l : dx) {
+                    int t = 4095 - Math.round((endx - l) * 4095 / xlimit);
+                    dxn.add(String.valueOf(t));
+                }
+                int startyn = 0;
+                int endyn = 0;
+                List<String> dyn = new ArrayList<>();
+                for (Integer i : dy) {
+                    int t = 4095 - Math.round((endy - i) * 4095 / ylimit);
+                    dyn.add(String.valueOf(t));
+                    if (i == starty) {
+                        startyn = t;
+                    }
+                    if (i == endy) {
+                        endyn = t;
+                    }
+                }
+                List<Integer> prueba = new ArrayList<>();
+                prueba.add(90);
+                prueba.add(1000);
+                prueba.add(2700);
+                prueba.add(3500);
+                prueba.add(3968);
+                prueba.add(1100);
+                prueba.add(250);
+                Log.i("Prueba(EEF): ", extendedEncodingFormat(prueba));
+                u_chart05.chd("t:" + String.join(",", dxn) + "|" + String.join(",", dyn)).chxr("0," + startyn + "," + endyn + "|1," + dxn.get(0) + "," + dxn.get(dxn.size()-1));
+                u_chart05.chxt("y,x").chxl("0:|" + String.join("|", yl) + "|1:|" + String.join("|", xl));
+                URL url = new URL(u_chart05.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(u_chart_05);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nPrueba:"));
+                imageViews.add(new ImageView(this));
+                imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_05));
+                runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
+            } catch (Exception e) {
+                Log.e("Error(u_05): ", e.toString());
+            } // Flujo de la bateria
+
             textViews.add(new TextView(this));
             textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             textViews.get(textViews.size()-1).setTextSize(textSize);
@@ -1654,7 +1622,32 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
             }
 
-            // Button
+            Button button = new Button(this);
+            button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            button.setTextSize(11);
+            button.setText("Descargar PDF!");
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        File pdf = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), "Reporte.pdf");
+                        if (open[0]) {
+                            pdfDocument.writeTo(new FileOutputStream(pdf));
+                            pdfDocument.close();
+                            open[0] = false;
+                            Snackbar snackbar = Snackbar.make(coordinatorLayout, "PDF Guardado en Descargas!", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
+                        }
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", pdf), "application/pdf");
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        Log.e("Error al Generar el PDF!", e.toString());
+                    }
+                }
+            });
+            runOnUiThread(() -> linearLayout.addView(button));
 
         }).start());
     }
