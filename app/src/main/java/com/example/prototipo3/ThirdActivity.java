@@ -64,6 +64,11 @@ public class ThirdActivity extends AppCompatActivity {
         String pieChartSize = "400x350";
         String scatterChartSize = "500x500";
 
+        int width = 612;
+        int height = 792;
+        int titleLineSpacing = 13;
+        int textLineSpacing = 12;
+        int leftMargin = 0;
         int textSize = 11;
 
         //textSize = (int) (11 * getResources().getDisplayMetrics().density + 0.5F);
@@ -213,7 +218,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             PdfDocument pdfDocument = new PdfDocument();
 
-            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(612, 792, 15 + 4 * info.size()).create(); // Carta (612x792)
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(width, height, 15 + 4 * info.size() + 1).create(); // Carta (612x792)
 
             Paint titles = new Paint();
             titles.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
@@ -233,18 +238,56 @@ public class ThirdActivity extends AppCompatActivity {
 
             Canvas canvas = page.getCanvas();
 
-            int x = 0;
-            int y = 12;
+            String s = "Instituto Politecnico Nacional";
 
-            canvas.drawText("Portada", x, y, titles);
+            int x = width / 2 - s.length() / 2;
+            int y = titleLineSpacing;
+
+            canvas.drawText(s, x, y, titles);
+            s = "escuela superior de CómputoadesS";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            s = "Reporte General Final";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            s = "Trabajo Terminal No. 2024-a065";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            s = "Consumo de energía en aplicaciones de video streaming";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            s = "Integrantes:";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            s = "Ríos alonso Juan Jose";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            s = "Roldan Gómez Juan";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            s = "salazar Gómez andres";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
 
             pdfDocument.finishPage(page);
 
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nNo. Dispositivos Registrados: " + info.size()));
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            x = 0;
-            y = 12;
+            s = "datos Generales";
+            x = width / 2 - s.length() / 2;
+            y = titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            x = leftMargin;
+            y += textLineSpacing;
             canvas.drawText("No. Dispositivos Registrados: " + info.size(), x, y, text);
 
             int tvu = 0;
@@ -310,36 +353,36 @@ public class ThirdActivity extends AppCompatActivity {
                 marcasUsos.put(info.get(i).get(1), marcasUsos.get(info.get(i).get(1)) + escaneo.get(i).size());
                 avsUsos.put(info.get(i).get(3), avsUsos.get(info.get(i).get(3)) + escaneo.get(i).size());
                 int id = 1;
-                for (List<Object> s : escaneo.get(i)) {
-                    ttv += (Long) s.get(2);
-                    tec += (Integer) s.get(3);
-                    appsVistas.put((String) s.get(5), appsVistas.get((String) s.get(5)) + 1);
-                    appsUso.put((String) s.get(5), appsUso.get((String) s.get(5)) + (Long) s.get(2));
-                    appsConsumo.put((String) s.get(5), appsConsumo.get((String) s.get(5)) + (Integer) s.get(3));
-                    vspu.get(i).get((String) s.get(5)).add(id);
-                    fabricantesVisualizacion.put(info.get(i).get(0), fabricantesVisualizacion.get(info.get(i).get(0)) + (Long) s.get(2));
-                    fabricantesConsumo.put(info.get(i).get(0), fabricantesConsumo.get(info.get(i).get(0)) + (Integer) s.get(3));
-                    marcasVisualizacion.put(info.get(i).get(1), marcasVisualizacion.get(info.get(i).get(1)) + (Long) s.get(2));
-                    marcasConsumo.put(info.get(i).get(1), marcasConsumo.get(info.get(i).get(1)) + (Integer) s.get(3));
-                    avsVisualizacion.put(info.get(i).get(3), avsVisualizacion.get(info.get(i).get(3)) + (Long) s.get(2));
-                    avsConsumo.put(info.get(i).get(3), avsConsumo.get(info.get(i).get(3)) + (Integer) s.get(3));
+                for (List<Object> scan : escaneo.get(i)) {
+                    ttv += (Long) scan.get(2);
+                    tec += (Integer) scan.get(3);
+                    appsVistas.put((String) scan.get(5), appsVistas.get((String) scan.get(5)) + 1);
+                    appsUso.put((String) scan.get(5), appsUso.get((String) scan.get(5)) + (Long) scan.get(2));
+                    appsConsumo.put((String) scan.get(5), appsConsumo.get((String) scan.get(5)) + (Integer) scan.get(3));
+                    vspu.get(i).get((String) scan.get(5)).add(id);
+                    fabricantesVisualizacion.put(info.get(i).get(0), fabricantesVisualizacion.get(info.get(i).get(0)) + (Long) scan.get(2));
+                    fabricantesConsumo.put(info.get(i).get(0), fabricantesConsumo.get(info.get(i).get(0)) + (Integer) scan.get(3));
+                    marcasVisualizacion.put(info.get(i).get(1), marcasVisualizacion.get(info.get(i).get(1)) + (Long) scan.get(2));
+                    marcasConsumo.put(info.get(i).get(1), marcasConsumo.get(info.get(i).get(1)) + (Integer) scan.get(3));
+                    avsVisualizacion.put(info.get(i).get(3), avsVisualizacion.get(info.get(i).get(3)) + (Long) scan.get(2));
+                    avsConsumo.put(info.get(i).get(3), avsConsumo.get(info.get(i).get(3)) + (Integer) scan.get(3));
                     id++;
                 }
             }
 
             int totalVecesUsado = tvu;
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada: " + totalVecesUsado));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Total de Veces Usada: " + totalVecesUsado, x, y, text);
 
             double totalTiempoVisualizado = ttv/(1000.0*60*60);
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Tiempo Visualizado: " + getString(R.string.round_one_decimal_place, totalTiempoVisualizado) + " h"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Total de Tiempo Visualizado: " + getString(R.string.round_one_decimal_place, totalTiempoVisualizado) + " h", x, y, text);
 
             int totalEnergiaConsumida = tec;
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Energia Consumida: " + totalEnergiaConsumida + " uAh"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Total de Energia Consumida: " + totalEnergiaConsumida + " uAh", x, y, text);
 
             float thc = 0;
@@ -377,26 +420,26 @@ public class ThirdActivity extends AppCompatActivity {
 
             float totalHuellaCarbono = thc;
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nHuella de Carbono Total Generada: " + getString(R.string.round_four_decimal_places, totalHuellaCarbono) + " gCO2e"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Huella de Carbono Total Generada: " + getString(R.string.round_four_decimal_places, totalHuellaCarbono) + " gCO2e", x, y, text);
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nQue es Equivalente a:"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Que es Equivalente a:", x, y, text);
             float lgc = thc / 2347.69814F;
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n" + getString(R.string.round_four_decimal_places, lgc) + " Litros de Gasolina Consumidos"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText(getString(R.string.round_four_decimal_places, lgc) + " Litros de Gasolina Consumidos", x, y, text);
             float krv = lgc * 9.73577129F;
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n" + getString(R.string.round_four_decimal_places, krv) + " Kilómetros Recorridos por un Vehículo de Pasajeros (4 llantas y 2 ejes)"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText(getString(R.string.round_four_decimal_places, krv) + " Kilómetros Recorridos por un Vehículo de Pasajeros (4 llantas y 2 ejes)", x, y, text);
             float kgu = thc / 3031.35524F;
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n" + getString(R.string.round_four_decimal_places, kgu) + " Kilogramos de Gas Usados para Cocinar"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText(getString(R.string.round_four_decimal_places, kgu) + " Kilogramos de Gas Usados para Cocinar", x, y, text);
             float kcq = thc / 1.96814494F;
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n" + getString(R.string.round_four_decimal_places, kcq) + " Kilogramos de Carbón Quemados"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText(getString(R.string.round_four_decimal_places, kcq) + " Kilogramos de Carbón Quemados", x, y, text);
 
             pdfDocument.finishPage(page);
@@ -406,34 +449,38 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Vista: " + appMasVista.getValue()));
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            x = 0;
-            y = 12;
+            s = "datos sobre las aplicaciones de VideoStreaming";
+            x = width / 2 - s.length() / 2;
+            y = titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            x = leftMargin;
+            y += textLineSpacing;
             canvas.drawText("App de VS Mas Veces Vista: " + appMasVista.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("No. de Veces Vista: " + appMasVista.getValue(), x, y, text);
 
             Map.Entry<String, Long> appMasUsada = Collections.max(appsUso.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp Mas Tiempo Usada: " + appMasUsada.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo Usada: " + getString(R.string.round_one_decimal_place, appMasUsada.getValue()/(1000.0*60*60)) + " h"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("App Mas Tiempo Usada: " + appMasUsada.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Tiempo Usada: " + getString(R.string.round_one_decimal_place, appMasUsada.getValue()/(1000.0*60*60)) + " h", x, y, text);
 
             Map.Entry<String, Integer> appMayorConsumo = Collections.max(appsConsumo.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp que Consumió la Mayor Cantidad de Energía: " + appMayorConsumo.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida : " + appMayorConsumo.getValue() + " uAh"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("App que Consumió la Mayor Cantidad de Energía: " + appMayorConsumo.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Energía Consumida : " + appMayorConsumo.getValue() + " uAh", x, y, text);
 
             Map.Entry<String, Float> appMayorCO2 = Collections.max(appsCO2.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp que Generó una Mayor Huella de Carbono: " + appMayorCO2.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono: " + getString(R.string.round_one_decimal_place, appMayorCO2.getValue()) + " gCO2e"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("App que Generó una Mayor Huella de Carbono: " + appMayorCO2.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Huella de Carbono: " + getString(R.string.round_one_decimal_place, appMayorCO2.getValue()) + " gCO2e", x, y, text);
             pdfDocument.finishPage(page);
 
@@ -465,8 +512,7 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nNúmero de Visualizaciones por App:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = 0;
-                y = 12;
+                y = titleLineSpacing;
                 canvas.drawText("Número de Visualizaciones por App:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -474,7 +520,8 @@ public class ThirdActivity extends AppCompatActivity {
                 //imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_01));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_01.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(01): ", e.toString());
@@ -516,13 +563,15 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo de Uso por App:"));
-                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
+                x = leftMargin;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + textLineSpacing;
                 canvas.drawText("Tiempo de Uso por App:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_02));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_02.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -566,14 +615,15 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida por App:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = 0;
-                y = 12;
+                x = leftMargin;
+                y = titleLineSpacing;
                 canvas.drawText("Tiempo de Uso por App:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_03));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;adesSdesSsSsSSssSs
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_03.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(03): ", e.toString());
@@ -615,13 +665,15 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono por App:"));
-                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
+                x = leftMargin;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + textLineSpacing;
                 canvas.drawText("Huella de Carbono por App:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_04));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_04.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -645,34 +697,38 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Usada: " + fabricanteMayorUso.getValue()));
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            x = 0;
-            y = 12;
+            s = "datos Sobre los Fabricantes de los dispositivos Registrados";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            x = leftMargin;
+            y += textLineSpacing;
             canvas.drawText("Fabricante de los Dispositivos con Mayor Uso: " + fabricanteMayorUso.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("No. de Veces Usada: " + fabricanteMayorUso.getValue(), x, y, text);
 
             Map.Entry<String, Long> fabricanteMayorVisualizacion = Collections.max(fabricantesVisualizacion.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nFabricante de los Dispositivos con Mayor Tiempo Visualizado: " + fabricanteMayorVisualizacion.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo Usada: " + getString(R.string.round_one_decimal_place, fabricanteMayorVisualizacion.getValue()/(1000.0*60*60)) + " h"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Fabricante de los Dispositivos con Mayor Tiempo Visualizado: " + fabricanteMayorVisualizacion.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Tiempo Usada: " + getString(R.string.round_one_decimal_place, fabricanteMayorVisualizacion.getValue()/(1000.0*60*60)) + " h", x, y, text);
 
             Map.Entry<String, Integer> fabricanteMayorConsumo = Collections.max(fabricantesConsumo.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nFabricante de los Dispositivos que Consumieron la Mayor Cantidad de Energía: " + fabricanteMayorConsumo.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida : " + fabricanteMayorConsumo.getValue() + " uAh"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Fabricante de los Dispositivos que Consumieron la Mayor Cantidad de Energía: " + fabricanteMayorConsumo.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Energía Consumida : " + fabricanteMayorConsumo.getValue() + " uAh", x, y, text);
 
             Map.Entry<String, Float> fabricanteMayorCO2 = Collections.max(fabricantesCO2.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nFabricante de los Dispositivos que Generaron una Mayor Huella de Carbono: " + fabricanteMayorCO2.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono: " + getString(R.string.round_four_decimal_places, fabricanteMayorCO2.getValue()) + " gCO2e"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Fabricante de los Dispositivos que Generaron una Mayor Huella de Carbono: " + fabricanteMayorCO2.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Huella de Carbono: " + getString(R.string.round_four_decimal_places, fabricanteMayorCO2.getValue()) + " gCO2e", x, y, text);
             pdfDocument.finishPage(page);
 
@@ -699,14 +755,14 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Fabricante del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = 0;
-                y = 12;
+                y = titleLineSpacing;
                 canvas.drawText("Total de Veces Usada por Fabricante del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_05));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_05.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(05): ", e.toString());
@@ -743,13 +799,15 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Fabricante del Dispositivo:"));
-                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
+                x = leftMargin;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + textLineSpacing;
                 canvas.drawText("Total de Tiempo Visualizado por Fabricante del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_06));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_06.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -788,14 +846,15 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Energía Consumida por Fabricante del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = 0;
-                y = 12;
+                x = leftMargin;
+                y = titleLineSpacing;
                 canvas.drawText("Total de Energía Consumida por Fabricante del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_07));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_07.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(07): ", e.toString());
@@ -832,13 +891,15 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Fabricante del Dispositivo:"));
-                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
+                x = leftMargin;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + textLineSpacing;
                 canvas.drawText("Total de Huella de Carbono Generada por Fabricante del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_08));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_08.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -859,34 +920,38 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Usada: " + marcaMayorUso.getValue()));
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            x = 0;
-            y = 12;
+            s = "datos Sobre las Marcas de los dispositivos Registrados";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            x = leftMargin;
+            y += textLineSpacing;
             canvas.drawText("Marca de los dispositivos con Mayor Uso: " + marcaMayorUso.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("No. de Veces Usada: " + marcaMayorUso.getValue(), x, y, text);
 
             Map.Entry<String, Long> marcaMayorVisualizacion = Collections.max(marcasVisualizacion.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nMarca de los dispositivos con Mayor Tiempo Visualizado: " + marcaMayorVisualizacion.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo Usada: " + getString(R.string.round_one_decimal_place, marcaMayorVisualizacion.getValue()/(1000.0*60*60)) + " h"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Marca de los dispositivos con Mayor Tiempo Visualizado: " + marcaMayorVisualizacion.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Tiempo Usada: " + getString(R.string.round_one_decimal_place, marcaMayorVisualizacion.getValue()/(1000.0*60*60)) + " h", x, y, text);
 
             Map.Entry<String, Integer> marcaMayorConsumo = Collections.max(marcasConsumo.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nMarca de los Dispositivos que Consumieron la Mayor Cantidad de Energía: " + marcaMayorConsumo.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida : " + marcaMayorConsumo.getValue() + " uAh"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Marca de los Dispositivos que Consumieron la Mayor Cantidad de Energía: " + marcaMayorConsumo.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Energía Consumida : " + marcaMayorConsumo.getValue() + " uAh", x, y, text);
 
             Map.Entry<String, Float> marcaMayorCO2 = Collections.max(marcasCO2.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nMarca de los Dispositivos que Generaron una Mayor Huella de Carbono: " + marcaMayorCO2.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono: " + getString(R.string.round_one_decimal_place, marcaMayorCO2.getValue()) + " gCO2e"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Marca de los Dispositivos que Generaron una Mayor Huella de Carbono: " + marcaMayorCO2.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Huella de Carbono: " + getString(R.string.round_one_decimal_place, marcaMayorCO2.getValue()) + " gCO2e", x, y, text);
             pdfDocument.finishPage(page);
 
@@ -913,14 +978,14 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Marca del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = 0;
-                y = 12;
+                y = titleLineSpacing;
                 canvas.drawText("Total de Veces Usada por Marca del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_09));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_09.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(09): ", e.toString());
@@ -957,13 +1022,15 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Marca del Dispositivo:"));
-                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
+                x = leftMargin;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + textLineSpacing;
                 canvas.drawText("Total de Tiempo Visualizado por Marca del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_10));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_10.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -1002,14 +1069,15 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Energía Consumida por Marca del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = 0;
-                y = 12;
+                x = leftMargin;
+                y = titleLineSpacing;
                 canvas.drawText("Total de Energía Consumida por Marca del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_11));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_11.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(11): ", e.toString());
@@ -1046,13 +1114,15 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Marca del Dispositivo:"));
-                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
+                x = leftMargin;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + textLineSpacing;
                 canvas.drawText("Total de Huella de Carbono Generada por Marca del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_12));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_12.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -1073,34 +1143,38 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Usada: " + avMayorUso.getValue()));
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            x = 0;
-            y = 12;
+            s = "datos Sobre la Versión de android de los dispositivos Registrados";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            x = leftMargin;
+            y += textLineSpacing;
             canvas.drawText("Versión de Android de los dispositivos con Mayor Uso: " + avMayorUso.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("No. de Veces Usada: " + avMayorUso.getValue(), x, y, text);
 
             Map.Entry<String, Long> avMayorVisualizacion = Collections.max(avsVisualizacion.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nVersión de Android de los dispositivos con Mayor Tiempo Visualizado: " + avMayorVisualizacion.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo Usada: " + getString(R.string.round_one_decimal_place, avMayorVisualizacion.getValue()/(1000.0*60*60)) + " h"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Versión de Android de los dispositivos con Mayor Tiempo Visualizado: " + avMayorVisualizacion.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Tiempo Usada: " + getString(R.string.round_one_decimal_place, avMayorVisualizacion.getValue()/(1000.0*60*60)) + " h", x, y, text);
 
             Map.Entry<String, Integer> avMayorConsumo = Collections.max(avsConsumo.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nVersión de Android de los Dispositivos que Consumieron la Mayor Cantidad de Energía: " + avMayorConsumo.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida : " + avMayorConsumo.getValue() + " uAh"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Versión de Android de los Dispositivos que Consumieron la Mayor Cantidad de Energía: " + avMayorConsumo.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Energía Consumida : " + avMayorConsumo.getValue() + " uAh", x, y, text);
 
             Map.Entry<String, Float> avMayorCO2 = Collections.max(avsCO2.entrySet(), Map.Entry.comparingByValue());
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nVersión de Android de los Dispositivos que Generaron una Mayor Huella de Carbono: " + avMayorCO2.getKey()));
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono: " + getString(R.string.round_four_decimal_places, avMayorCO2.getValue()) + " gCO2e"));
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Versión de Android de los Dispositivos que Generaron una Mayor Huella de Carbono: " + avMayorCO2.getKey(), x, y, text);
-            y += 12;
+            y += textLineSpacing;
             canvas.drawText("Huella de Carbono: " + getString(R.string.round_four_decimal_places, avMayorCO2.getValue()) + " gCO2e", x, y, text);
             pdfDocument.finishPage(page);
 
@@ -1127,14 +1201,14 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Versión de Android del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = 0;
-                y = 12;
+                y = titleLineSpacing;
                 canvas.drawText("Total de Veces Usada por Versión de Android del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_13));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;adesSdesSsSsSSssSs
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_13.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(13): ", e.toString());
@@ -1171,13 +1245,15 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Versión de Android del Dispositivo:"));
-                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
+                x = leftMargin;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + textLineSpacing;
                 canvas.drawText("Total de Tiempo Visualizado por Versión de Android del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_14));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_14.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -1216,14 +1292,15 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Energía Consumida por Versión de Android del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = 0;
-                y = 12;
+                x = leftMargin;
+                y = titleLineSpacing;
                 canvas.drawText("Total de Energía Consumida por Versión de Android del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_15));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_15.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(15): ", e.toString());
@@ -1260,13 +1337,15 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Versión de Android del Dispositivo:"));
-                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
+                x = leftMargin;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + textLineSpacing;
                 canvas.drawText("Total de Huella de Carbono Generada por Versión de Android del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_16));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                y += 12;
+                x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_16.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -1285,9 +1364,10 @@ public class ThirdActivity extends AppCompatActivity {
 
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            x = 0;
-            y = 12;
-            canvas.drawText("Usuarios", x, y, titles);
+            s = "Usuarios";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
             pdfDocument.finishPage(page);
 
             for (int i = 0; i < info.size(); i++) {
@@ -1299,21 +1379,23 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nVersión de Android del Dispositivo: " + info.get(no).get(3)));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = 0;
-                y = 12;
-                canvas.drawText("Usuario No. " + (no + 1), x, y, titles);
-                y += 12;
+                s = "Usuario No. " + (no + 1);
+                x = width / 2 - s.length() / 2;
+                y += titleLineSpacing;
+                canvas.drawText(s, x, y, titles);
+                x = leftMargin;
+                y += textLineSpacing;
                 canvas.drawText("Fabricante del Dispositivo: " + info.get(no).get(0), x, y, text);
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("Marca del Dispositivo: " + info.get(no).get(1), x, y, text);
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("Modelo del Dispositivo: " + info.get(no).get(2), x, y, text);
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("Versión de Android del Dispositivo: " + info.get(no).get(3), x, y, text);
 
                 int u_totalVecesUsado = escaneo.get(i).size();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada: " + u_totalVecesUsado));
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("Total de Veces Usada: " + u_totalVecesUsado, x, y, text);
 
                 long u_ttv = 0;
@@ -1335,24 +1417,24 @@ public class ThirdActivity extends AppCompatActivity {
                     u_vs.put(vsAppName, new ArrayList<>());
                 }
                 int id = 1;
-                for (List<Object> s : escaneo.get(i)) {
-                    u_ttv += (Long) s.get(2);
-                    u_tec += (Integer) s.get(3);
-                    u_appsVistas.put((String) s.get(5), u_appsVistas.get((String) s.get(5)) + 1);
-                    u_appsUso.put((String) s.get(5), u_appsUso.get((String) s.get(5)) + (Long) s.get(2));
-                    u_appsConsumo.put((String) s.get(5), u_appsConsumo.get((String) s.get(5)) + (Integer) s.get(3));
-                    u_vs.get((String) s.get(5)).add(id);
+                for (List<Object> scan : escaneo.get(i)) {
+                    u_ttv += (Long) scan.get(2);
+                    u_tec += (Integer) scan.get(3);
+                    u_appsVistas.put((String) scan.get(5), u_appsVistas.get((String) scan.get(5)) + 1);
+                    u_appsUso.put((String) scan.get(5), u_appsUso.get((String) scan.get(5)) + (Long) scan.get(2));
+                    u_appsConsumo.put((String) scan.get(5), u_appsConsumo.get((String) scan.get(5)) + (Integer) scan.get(3));
+                    u_vs.get((String) scan.get(5)).add(id);
                     id++;
                 }
 
                 double u_totalTiempoVisualizado = u_ttv/(1000.0*60*60);
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Tiempo Visualizado: " + getString(R.string.round_one_decimal_place, u_totalTiempoVisualizado) + " h"));
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("Total de Tiempo Visualizado: " + getString(R.string.round_one_decimal_place, u_totalTiempoVisualizado) + " h", x, y, text);
 
                 int u_totalEnergiaConsumida = u_tec;
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Energia Consumida: " + u_totalEnergiaConsumida + " uAh"));
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("Total de Energia Consumida: " + u_totalEnergiaConsumida + " uAh", x, y, text);
 
                 float u_thc = 0;
@@ -1373,39 +1455,39 @@ public class ThirdActivity extends AppCompatActivity {
 
                 float u_totalHuellaCarbono = u_thc;
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nHuella de Carbono Total Generada: " + getString(R.string.round_four_decimal_places, u_totalHuellaCarbono) + " gCO2e"));
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("Huella de Carbono Total Generada: " + getString(R.string.round_four_decimal_places, u_totalHuellaCarbono) + " gCO2e", x, y, text);
 
                 Map.Entry<String, Integer> u_appMasVista = Collections.max(u_appsVistas.entrySet(), Map.Entry.comparingByValue());
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp de VS Mas Veces Vista: " + u_appMasVista.getKey()));
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Vista: " + u_appMasVista.getValue()));
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("App de VS Mas Veces Vista: " + u_appMasVista.getKey(), x, y, text);
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("No. de Veces Vista: " + u_appMasVista.getValue(), x, y, text);
 
                 Map.Entry<String, Long> u_appMasUsada = Collections.max(u_appsUso.entrySet(), Map.Entry.comparingByValue());
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp Mas Tiempo Usada: " + u_appMasUsada.getKey()));
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo Usada: " + getString(R.string.round_one_decimal_place, u_appMasUsada.getValue()/(1000.0*60*60)) + " h"));
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("App Mas Tiempo Usada: " + u_appMasUsada.getKey(), x, y, text);
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("Tiempo Usada: " + getString(R.string.round_one_decimal_place, u_appMasUsada.getValue()/(1000.0*60*60)) + " h", x, y, text);
 
                 Map.Entry<String, Integer> u_appMayorConsumo = Collections.max(u_appsConsumo.entrySet(), Map.Entry.comparingByValue());
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp que Consumió la Mayor Cantidad de Energía: " + u_appMayorConsumo.getKey()));
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida : " + u_appMayorConsumo.getValue() + " uAh"));
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("App que Consumió la Mayor Cantidad de Energía: " + u_appMayorConsumo.getKey(), x, y, text);
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("Energía Consumida : " + u_appMayorConsumo.getValue() + " uAh", x, y, text);
 
                 Map.Entry<String, Float> u_appMayorCO2 = Collections.max(u_appsCO2.entrySet(), Map.Entry.comparingByValue());
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp que Generó una Mayor Huella de Carbono: " + u_appMayorCO2.getKey()));
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono: " + getString(R.string.round_four_decimal_places, u_appMayorCO2.getValue()) + " gCO2e"));
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("App que Generó una Mayor Huella de Carbono: " + u_appMayorCO2.getKey(), x, y, text);
-                y += 12;
+                y += textLineSpacing;
                 canvas.drawText("Huella de Carbono: " + getString(R.string.round_four_decimal_places, u_appMayorCO2.getValue()) + " gCO2e", x, y, text);
                 pdfDocument.finishPage(page);
 
@@ -1437,14 +1519,14 @@ public class ThirdActivity extends AppCompatActivity {
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nNúmero de Visualizaciones por app:"));
                     page = pdfDocument.startPage(pageInfo);
                     canvas = page.getCanvas();
-                    x = 0;
-                    y = 12;
+                    y = titleLineSpacing;
                     canvas.drawText("Número de Visualizaciones por app:", x, y, text);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_01));
                     runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                    y += 12;
+                    x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                    y += textLineSpacing;
                     canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_01.getAbsolutePath()), x, y, images);
                 } catch (Exception e) {
                     Log.e("Error(u_01): ", e.toString());
@@ -1486,13 +1568,15 @@ public class ThirdActivity extends AppCompatActivity {
                     is.close();
                     os.close();
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo de Uso por app:"));
-                    y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
+                    x = leftMargin;
+                    y += Integer.valueOf(pieChartSize.split("x")[1]) + textLineSpacing;
                     canvas.drawText("Tiempo de Uso por app:", x, y, text);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_02));
                     runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                    y += 12;
+                    x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                    y += textLineSpacing;
                     canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_02.getAbsolutePath()), x, y, images);
                     pdfDocument.finishPage(page);
                 } catch (Exception e) {
@@ -1536,14 +1620,15 @@ public class ThirdActivity extends AppCompatActivity {
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida por app:"));
                     page = pdfDocument.startPage(pageInfo);
                     canvas = page.getCanvas();
-                    x = 0;
-                    y = 12;
+                    x = leftMargin;
+                    y = titleLineSpacing;
                     canvas.drawText("Energía Consumida por app:", x, y, text);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_03));
                     runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                    y += 12;
+                    x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                    y += textLineSpacing;
                     canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_03.getAbsolutePath()), x, y, images);
                 } catch (Exception e) {
                     Log.e("Error(u_03): ", e.toString());
@@ -1585,13 +1670,15 @@ public class ThirdActivity extends AppCompatActivity {
                     is.close();
                     os.close();
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono por app:"));
-                    y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
+                    x = leftMargin;
+                    y += Integer.valueOf(pieChartSize.split("x")[1]) + textLineSpacing;
                     canvas.drawText("Huella de Carbono por app:", x, y, text);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_04));
                     runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                    y += 12;
+                    x = width / 2 - Integer.valueOf(pieChartSize.split("x")[0]) / 2;
+                    y += textLineSpacing;
                     canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_04.getAbsolutePath()), x, y, images);
                     pdfDocument.finishPage(page);
                 } catch (Exception e) {
@@ -1663,14 +1750,15 @@ public class ThirdActivity extends AppCompatActivity {
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nComportamiento de la Batería:"));
                     page = pdfDocument.startPage(pageInfo);
                     canvas = page.getCanvas();
-                    x = 0;
-                    y = 12;
+                    x = leftMargin;
+                    y = titleLineSpacing;
                     canvas.drawText("Comportamiento de la Batería:", x, y, text);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_05));
                     runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                    y += 12;
+                    x = width / 2 - Integer.valueOf(scatterChartSize.split("x")[0]) / 2;
+                    y += textLineSpacing;
                     canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_05.getAbsolutePath()), x, y, images);
                     pdfDocument.finishPage(page);
                 } catch (Exception e) {
@@ -1684,6 +1772,17 @@ public class ThirdActivity extends AppCompatActivity {
                 textViews.get(textViews.size()-1).setText("\n\n - - - - - - - - - - - -\n");
                 runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
             }
+
+            page = pdfDocument.startPage(pageInfo);
+            canvas = page.getCanvas();
+            s = "Conclusiones";
+            x = width / 2 - s.length() / 2;
+            y += titleLineSpacing;
+            canvas.drawText(s, x, y, titles);
+            x = leftMargin;
+            y += textLineSpacing;
+            canvas.drawText("...", x, y, text);
+            pdfDocument.finishPage(page);
 
             Button button = new Button(this);
             button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
