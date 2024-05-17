@@ -61,7 +61,8 @@ public class ThirdActivity extends AppCompatActivity {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM", Locale.forLanguageTag("es-MX"));
 
-        String chartSize = "400x400";
+        String pieChartSize = "350x350";
+        String scatterChartSize = "450x450";
 
         int textSize = 11;
 
@@ -141,9 +142,7 @@ public class ThirdActivity extends AppCompatActivity {
             }
 
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nBateria: " + bateria));
-            if (true) {
-                return;
-            }
+
             List<List<List<Object>>> analizador = new ArrayList<>();
 
             for (int i = 0; i < data.size(); i++) {
@@ -216,7 +215,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             PdfDocument pdfDocument = new PdfDocument();
 
-            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(612, 792, 15 + 3 * info.size()).create(); // Carta (612x792)
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(612, 792, 15 + 4 * info.size()).create(); // Carta (612x792)
 
             Paint titles = new Paint();
             titles.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
@@ -367,8 +366,8 @@ public class ThirdActivity extends AppCompatActivity {
                 for (List<Object> h : huella.get(i)) {
                     thc += (Float) h.get(1);
                     fabricantesCO2.put(info.get(i).get(0), fabricantesCO2.get(info.get(i).get(0)) + (Float) h.get(1));
-                    marcasCO2.put(info.get(i).get(1), marcasCO2.get(info.get(i).get(0)) + (Float) h.get(1));
-                    avsCO2.put(info.get(i).get(3), avsCO2.get(info.get(i).get(0)) + (Float) h.get(1));
+                    marcasCO2.put(info.get(i).get(1), marcasCO2.get(info.get(i).get(1)) + (Float) h.get(1));
+                    avsCO2.put(info.get(i).get(3), avsCO2.get(info.get(i).get(3)) + (Float) h.get(1));
                     for (String vs : vspu.get(i).keySet()) {
                         if (vspu.get(i).get(vs).contains((Integer) h.get(0))) {
                             appsCO2.put(vs, appsCO2.get(vs) + (Float) h.get(1));
@@ -382,6 +381,9 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nHuella de Carbono Total Generada: " + totalHuellaCarbono + " gCO2e"));
             y += 12;
             canvas.drawText("Huella de Carbono Total Generada: " + totalHuellaCarbono + " gCO2e", x, y, text);
+
+            // Equivalencias
+
             pdfDocument.finishPage(page);
 
             Map.Entry<String, Integer> appMasVista = Collections.max(appsVistas.entrySet(), Map.Entry.comparingByValue());
@@ -422,11 +424,14 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_01 = File.createTempFile("chart01_", ".png", getCacheDir());
-                ImageCharts chart01 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart01 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> dl = new ArrayList<>();
                 List<String> co = new ArrayList<>();
                 for (Map.Entry<String, Integer> vistas : appsVistas.entrySet()) {
+                    if (vistas.getValue() == 0) {
+                        continue;
+                    }
                     d.add(String.valueOf(vistas.getValue()));
                     dl.add(vistas.getKey());
                     co.add(videoStreaming.get(vistas.getKey()));
@@ -470,14 +475,19 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_02 = File.createTempFile("chart02_", ".png", getCacheDir());
-                ImageCharts chart02 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart02 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
+                List<String> co = new ArrayList<>();
                 for (Map.Entry<String, Long> uso : appsUso.entrySet()) {
+                    if (uso.getValue() == 0) {
+                        continue;
+                    }
                     d.add(String.valueOf(uso.getValue()));
                     l.add(uso.getKey());
+                    co.add(videoStreaming.get(uso.getKey()));
                 }
-                chart02.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                chart02.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l)).chco(String.join("|", co));
                 URL url = new URL(chart02.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_02);
@@ -489,7 +499,7 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo de Uso por App:"));
-                y += Integer.valueOf(chartSize.split("x")[1]) + 12;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
                 canvas.drawText("Tiempo de Uso por App:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -513,14 +523,19 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_03 = File.createTempFile("chart03_", ".png", getCacheDir());
-                ImageCharts chart03 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart03 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
+                List<String> co = new ArrayList<>();
                 for (Map.Entry<String, Integer> consumo : appsConsumo.entrySet()) {
+                    if (consumo.getValue() == 0) {
+                        continue;
+                    }
                     d.add(String.valueOf(consumo.getValue()));
                     l.add(consumo.getKey());
+                    co.add(videoStreaming.get(consumo.getKey()));
                 }
-                chart03.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                chart03.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l)).chco(String.join("|", co));
                 URL url = new URL(chart03.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_03);
@@ -557,14 +572,19 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_04 = File.createTempFile("chart04_", ".png", getCacheDir());
-                ImageCharts chart04 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart04 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
+                List<String> co = new ArrayList<>();
                 for (Map.Entry<String, Float> co2 : appsCO2.entrySet()) {
+                    if (co2.getValue() == 0) {
+                        continue;
+                    }
                     d.add(String.valueOf(co2.getValue()));
                     l.add(co2.getKey());
+                    co.add(videoStreaming.get(co2.getKey()));
                 }
-                chart04.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                chart04.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l)).chco(String.join("|", co));
                 URL url = new URL(chart04.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_04);
@@ -576,7 +596,7 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono por App:"));
-                y += Integer.valueOf(chartSize.split("x")[1]) + 12;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
                 canvas.drawText("Huella de Carbono por App:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -639,7 +659,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_05 = File.createTempFile("chart05_", ".png", getCacheDir());
-                ImageCharts chart05 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart05 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Integer> usos : fabricantesUsos.entrySet()) {
@@ -683,7 +703,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_06 = File.createTempFile("chart06_", ".png", getCacheDir());
-                ImageCharts chart06 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart06 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Long> visualizado : fabricantesVisualizacion.entrySet()) {
@@ -702,7 +722,7 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Fabricante del Dispositivo:"));
-                y += Integer.valueOf(chartSize.split("x")[1]) + 12;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
                 canvas.drawText("Total de Tiempo Visualizado por Fabricante del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -726,7 +746,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_07 = File.createTempFile("chart07_", ".png", getCacheDir());
-                ImageCharts chart07 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart07 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Integer> consumo : fabricantesConsumo.entrySet()) {
@@ -770,7 +790,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_08 = File.createTempFile("chart08_", ".png", getCacheDir());
-                ImageCharts chart08 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart08 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Float> co2 : fabricantesCO2.entrySet()) {
@@ -789,7 +809,7 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Fabricante del Dispositivo:"));
-                y += Integer.valueOf(chartSize.split("x")[1]) + 12;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
                 canvas.drawText("Total de Huella de Carbono Generada por Fabricante del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -849,7 +869,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_09 = File.createTempFile("chart09_", ".png", getCacheDir());
-                ImageCharts chart09 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart09 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Integer> usos : marcasUsos.entrySet()) {
@@ -893,7 +913,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_10 = File.createTempFile("chart10_", ".png", getCacheDir());
-                ImageCharts chart10 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart10 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Long> visualizado : marcasVisualizacion.entrySet()) {
@@ -912,7 +932,7 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Marca del Dispositivo:"));
-                y += Integer.valueOf(chartSize.split("x")[1]) + 12;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
                 canvas.drawText("Total de Tiempo Visualizado por Marca del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -936,7 +956,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_11 = File.createTempFile("chart11_", ".png", getCacheDir());
-                ImageCharts chart11 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart11 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Integer> consumo : marcasConsumo.entrySet()) {
@@ -980,7 +1000,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_12 = File.createTempFile("chart12_", ".png", getCacheDir());
-                ImageCharts chart12 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart12 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Float> co2 : marcasCO2.entrySet()) {
@@ -999,7 +1019,7 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Marca del Dispositivo:"));
-                y += Integer.valueOf(chartSize.split("x")[1]) + 12;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
                 canvas.drawText("Total de Huella de Carbono Generada por Marca del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -1059,7 +1079,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_13 = File.createTempFile("chart13_", ".png", getCacheDir());
-                ImageCharts chart13 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart13 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Integer> usos : avsUsos.entrySet()) {
@@ -1103,7 +1123,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_14 = File.createTempFile("chart14_", ".png", getCacheDir());
-                ImageCharts chart14 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart14 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Long> visualizado : avsVisualizacion.entrySet()) {
@@ -1122,7 +1142,7 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Versión de Android del Dispositivo:"));
-                y += Integer.valueOf(chartSize.split("x")[1]) + 12;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
                 canvas.drawText("Total de Tiempo Visualizado por Versión de Android del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -1146,7 +1166,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_15 = File.createTempFile("chart15_", ".png", getCacheDir());
-                ImageCharts chart15 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart15 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Integer> consumo : avsConsumo.entrySet()) {
@@ -1190,7 +1210,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             try {
                 File chart_16 = File.createTempFile("chart16_", ".png", getCacheDir());
-                ImageCharts chart16 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                ImageCharts chart16 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
                 List<String> l = new ArrayList<>();
                 for (Map.Entry<String, Float> co2 : avsCO2.entrySet()) {
@@ -1209,7 +1229,7 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Versión de Android del Dispositivo:"));
-                y += Integer.valueOf(chartSize.split("x")[1]) + 12;
+                y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
                 canvas.drawText("Total de Huella de Carbono Generada por Versión de Android del Dispositivo:", x, y, text);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -1223,93 +1243,6 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nError al Generar el Chart 16!!!"));
                 pdfDocument.finishPage(page);
             }
-
-            // Flujo de la bateria
-            textViews.add(new TextView(this));
-            textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            textViews.get(textViews.size()-1).setTextSize(textSize);
-            textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
-            textViews.get(textViews.size()-1).setText("");
-            runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
-
-            try {
-                File u_chart_05 = File.createTempFile("u_chart05_", ".png", getCacheDir());
-                ImageCharts u_chart05 = new ImageCharts().cht("lxy").chs("800x800").chof(".png");
-                List<Long> dx = new ArrayList<>();
-                List<Integer> dy = new ArrayList<>();
-                /*for (List<Object> row : bateria.get(i)) {
-                    dx.add((Long) row.get(4));
-                    dy.add((Integer) row.get(0));
-                }*/
-                dx.add(1715532219672L);
-                dy.add(123409);
-                dx.add(1715632219672L);
-                dy.add(213409);
-                dx.add(1715732219672L);
-                dy.add(113409);
-                dx.add(1715832219672L);
-                dy.add(83409);
-                long startx = dx.get(0);
-                long endx = dx.get(dx.size()-1);
-                long xlimit = endx - startx;
-                int starty = Collections.min(dy);
-                int endy = Collections.max(dy);
-                int ylimit = endy - starty;
-                List<String> xl = new ArrayList<>();
-                for (long l = 0; l <= xlimit; l += Math.round(xlimit/5.0)) {
-                    xl.add(sdf.format(new Date(startx + l)));
-                }
-                List<String> yl = new ArrayList<>();
-                for (int i = 0; i <= ylimit; i += Math.round(ylimit/7)) {
-                    yl.add(String.valueOf(starty + i));
-                }
-                List<String> dxn = new ArrayList<>();
-                for (Long l : dx) {
-                    int t = 4095 - Math.round((endx - l) * 4095 / xlimit);
-                    dxn.add(String.valueOf(t));
-                }
-                int startyn = 0;
-                int endyn = 0;
-                List<String> dyn = new ArrayList<>();
-                for (Integer i : dy) {
-                    int t = 4095 - Math.round((endy - i) * 4095 / ylimit);
-                    dyn.add(String.valueOf(t));
-                    if (i == starty) {
-                        startyn = t;
-                    }
-                    if (i == endy) {
-                        endyn = t;
-                    }
-                }
-                List<Integer> prueba = new ArrayList<>();
-                prueba.add(90);
-                prueba.add(1000);
-                prueba.add(2700);
-                prueba.add(3500);
-                prueba.add(3968);
-                prueba.add(1100);
-                prueba.add(250);
-                Log.i("Prueba(EEF): ", extendedEncodingFormat(prueba));
-                u_chart05.chd("t:" + String.join(",", dxn) + "|" + String.join(",", dyn)).chxr("0," + startyn + "," + endyn + "|1," + dxn.get(0) + "," + dxn.get(dxn.size()-1));
-                u_chart05.chxt("y,x").chxl("0:|" + String.join("|", yl) + "|1:|" + String.join("|", xl));
-                URL url = new URL(u_chart05.toURL());
-                InputStream is = url.openStream();
-                OutputStream os = new FileOutputStream(u_chart_05);
-                byte[] b = new byte[1024];
-                int nRead;
-                while ((nRead = is.read(b)) != -1) {
-                    os.write(b, 0, nRead);
-                }
-                is.close();
-                os.close();
-                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nPrueba:"));
-                imageViews.add(new ImageView(this));
-                imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_05));
-                runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-            } catch (Exception e) {
-                Log.e("Error(u_05): ", e.toString());
-            } // Flujo de la bateria
 
             textViews.add(new TextView(this));
             textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -1328,7 +1261,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             for (int i = 0; i < info.size(); i++) {
                 int no = i;
-                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nUsuario No. " + no));
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nUsuario No. " + (no+1)));
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nFabricante del Dispositivo: " + info.get(no).get(0)));
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nMarca del Dispositivo: " + info.get(no).get(1)));
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nModelo del Dispositivo: " + info.get(no).get(2)));
@@ -1337,7 +1270,7 @@ public class ThirdActivity extends AppCompatActivity {
                 canvas = page.getCanvas();
                 x = 0;
                 y = 12;
-                canvas.drawText("Usuario No. " + no, x, y, titles);
+                canvas.drawText("Usuario No. " + (no + 1), x, y, titles);
                 y += 12;
                 canvas.drawText("Fabricante del Dispositivo: " + info.get(no).get(0), x, y, text);
                 y += 12;
@@ -1447,14 +1380,19 @@ public class ThirdActivity extends AppCompatActivity {
 
                 try {
                     File u_chart_01 = File.createTempFile("u_chart01_", ".png", getCacheDir());
-                    ImageCharts u_chart01 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                    ImageCharts u_chart01 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                     List<String> d = new ArrayList<>();
                     List<String> l = new ArrayList<>();
+                    List<String> co = new ArrayList<>();
                     for (Map.Entry<String, Integer> vistas : u_appsVistas.entrySet()) {
+                        if (vistas.getValue() == 0) {
+                            continue;
+                        }
                         d.add(String.valueOf(vistas.getValue()));
                         l.add(vistas.getKey());
+                        co.add(videoStreaming.get(vistas.getKey()));
                     }
-                    u_chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                    u_chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l)).chco(String.join("|", co));
                     URL url = new URL(u_chart01.toURL());
                     InputStream is = url.openStream();
                     OutputStream os = new FileOutputStream(u_chart_01);
@@ -1491,14 +1429,19 @@ public class ThirdActivity extends AppCompatActivity {
 
                 try {
                     File u_chart_02 = File.createTempFile("u_chart02_", ".png", getCacheDir());
-                    ImageCharts u_chart02 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                    ImageCharts u_chart02 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                     List<String> d = new ArrayList<>();
                     List<String> l = new ArrayList<>();
+                    List<String> co = new ArrayList<>();
                     for (Map.Entry<String, Long> uso : u_appsUso.entrySet()) {
+                        if (uso.getValue() == 0) {
+                            continue;
+                        }
                         d.add(String.valueOf(uso.getValue()));
                         l.add(uso.getKey());
+                        co.add(videoStreaming.get(uso.getKey()));
                     }
-                    u_chart02.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                    u_chart02.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l)).chco(String.join("|", co));
                     URL url = new URL(u_chart02.toURL());
                     InputStream is = url.openStream();
                     OutputStream os = new FileOutputStream(u_chart_02);
@@ -1510,7 +1453,7 @@ public class ThirdActivity extends AppCompatActivity {
                     is.close();
                     os.close();
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo de Uso por app:"));
-                    y += Integer.valueOf(chartSize.split("x")[1]) + 12;
+                    y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
                     canvas.drawText("Tiempo de Uso por app:", x, y, text);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -1534,14 +1477,19 @@ public class ThirdActivity extends AppCompatActivity {
 
                 try {
                     File u_chart_03 = File.createTempFile("u_chart03_", ".png", getCacheDir());
-                    ImageCharts u_chart03 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                    ImageCharts u_chart03 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                     List<String> d = new ArrayList<>();
                     List<String> l = new ArrayList<>();
+                    List<String> co = new ArrayList<>();
                     for (Map.Entry<String, Integer> consumo : u_appsConsumo.entrySet()) {
+                        if (consumo.getValue() == 0) {
+                            continue;
+                        }
                         d.add(String.valueOf(consumo.getValue()));
                         l.add(consumo.getKey());
+                        co.add(videoStreaming.get(consumo.getKey()));
                     }
-                    u_chart03.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                    u_chart03.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l)).chco(String.join("|", co));
                     URL url = new URL(u_chart03.toURL());
                     InputStream is = url.openStream();
                     OutputStream os = new FileOutputStream(u_chart_03);
@@ -1578,14 +1526,19 @@ public class ThirdActivity extends AppCompatActivity {
 
                 try {
                     File u_chart_04 = File.createTempFile("u_chart04_", ".png", getCacheDir());
-                    ImageCharts u_chart04 = new ImageCharts().cht("p").chs(chartSize).chof(".png");
+                    ImageCharts u_chart04 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                     List<String> d = new ArrayList<>();
                     List<String> l = new ArrayList<>();
+                    List<String> co = new ArrayList<>();
                     for (Map.Entry<String, Float> co2 : u_appsCO2.entrySet()) {
+                        if (co2.getValue() == 0) {
+                            continue;
+                        }
                         d.add(String.valueOf(co2.getValue()));
                         l.add(co2.getKey());
+                        co.add(videoStreaming.get(co2.getKey()));
                     }
-                    u_chart04.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l));
+                    u_chart04.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", l)).chco(String.join("|", co));
                     URL url = new URL(u_chart04.toURL());
                     InputStream is = url.openStream();
                     OutputStream os = new FileOutputStream(u_chart_04);
@@ -1597,7 +1550,7 @@ public class ThirdActivity extends AppCompatActivity {
                     is.close();
                     os.close();
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono por app:"));
-                    y += Integer.valueOf(chartSize.split("x")[1]) + 12;
+                    y += Integer.valueOf(pieChartSize.split("x")[1]) + 12;
                     canvas.drawText("Huella de Carbono por app:", x, y, text);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -1612,7 +1565,82 @@ public class ThirdActivity extends AppCompatActivity {
                     pdfDocument.finishPage(page);
                 }
 
-                // Flujo de la bateria
+                textViews.add(new TextView(this));
+                textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                textViews.get(textViews.size()-1).setTextSize(textSize);
+                textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+                textViews.get(textViews.size()-1).setText("");
+                runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
+
+                try {
+                    File u_chart_05 = File.createTempFile("u_chart05_", ".png", getCacheDir());
+                    ImageCharts u_chart05 = new ImageCharts().cht("lxy").chs(scatterChartSize).chof(".png");
+                    List<Long> dx = new ArrayList<>();
+                    List<Integer> dy = new ArrayList<>();
+                    for (List<Object> row : bateria.get(i)) {
+                        dx.add((Long) row.get(4));
+                        dy.add((Integer) row.get(0));
+                    }
+                    long startx = dx.get(0);
+                    long endx = dx.get(dx.size()-1);
+                    long xlimit = endx - startx;
+                    int starty = Collections.min(dy);
+                    int endy = Collections.max(dy);
+                    int ylimit = endy - starty;
+                    List<String> xl = new ArrayList<>();
+                    for (long l = 0; l <= xlimit; l += Math.round(xlimit/5.0)) {
+                        xl.add(sdf.format(new Date(startx + l)).substring(0, 6));
+                    }
+                    List<String> yl = new ArrayList<>();
+                    for (int j = 0; j <= ylimit; j += Math.round(ylimit/7)) {
+                        yl.add(String.valueOf(starty + j));
+                    }
+                    List<Integer> dxn = new ArrayList<>();
+                    for (Long l : dx) {
+                        int t = 4094 - Math.round((endx - l) * 4094 / xlimit);
+                        dxn.add(t);
+                    }
+                    int startyn = 0;
+                    int endyn = 0;
+                    List<Integer> dyn = new ArrayList<>();
+                    for (Integer j : dy) {
+                        int t = 4094 - Math.round((endy - j) * 4094 / ylimit);
+                        dyn.add(t);
+                        if (j == starty) {
+                            startyn = t;
+                        }
+                        if (j == endy) {
+                            endyn = t;
+                        }
+                    }
+                    u_chart05.chd("e:" + extendedEncodingFormat(dxn) + "," + extendedEncodingFormat(dyn)).chxr("0," + startyn + "," + endyn + "|1," + dxn.get(0) + "," + dxn.get(dxn.size()-1));
+                    u_chart05.chxt("y,x").chxl("0:|" + String.join("|", yl) + "|1:|" + String.join("|", xl));
+                    URL url = new URL(u_chart05.toURL());
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(u_chart_05);
+                    byte[] b = new byte[1024];
+                    int nRead;
+                    while ((nRead = is.read(b)) != -1) {
+                        os.write(b, 0, nRead);
+                    }
+                    is.close();
+                    os.close();
+                    runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nComportamiento de la Batería:"));
+                    page = pdfDocument.startPage(pageInfo);
+                    canvas = page.getCanvas();
+                    x = 0;
+                    y = 12;
+                    canvas.drawText("Comportamiento de la Batería:", x, y, text);
+                    imageViews.add(new ImageView(this));
+                    imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_05));
+                    runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
+                    y += 12;
+                    canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_05.getAbsolutePath()), x, y, images);
+                    pdfDocument.finishPage(page);
+                } catch (Exception e) {
+                    Log.e("Error(u_05): ", e.toString());
+                }
 
                 textViews.add(new TextView(this));
                 textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -1748,10 +1776,8 @@ public class ThirdActivity extends AppCompatActivity {
                     eef += (char)(p + 71);
                 } else if (p < 62) {
                     eef += (char)(p - 4);
-                } else if (p == 62) {
-                    eef += "-";
                 } else {
-                    eef += ".";
+                    eef += "-";
                 }
             }
         }
