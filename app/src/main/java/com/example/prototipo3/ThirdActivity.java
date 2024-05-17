@@ -66,9 +66,9 @@ public class ThirdActivity extends AppCompatActivity {
 
         int width = 612;
         int height = 792;
-        int titleLineSpacing = 13;
-        int textLineSpacing = 12;
-        int leftMargin = 0;
+        int titleLineSpacing = 14;
+        int textLineSpacing = 13;
+        int leftMargin = 1;
         int textSize = 11;
 
         //textSize = (int) (11 * getResources().getDisplayMetrics().density + 0.5F);
@@ -227,8 +227,8 @@ public class ThirdActivity extends AppCompatActivity {
 
             Paint text = new Paint();
             text.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-            titles.setTextSize(12);
-            titles.setColor(getColor(R.color.black));
+            text.setTextSize(12);
+            text.setColor(getColor(R.color.black));
 
             Paint images = new Paint();
 
@@ -699,7 +699,7 @@ public class ThirdActivity extends AppCompatActivity {
             canvas = page.getCanvas();
             s = "datos Sobre los Fabricantes de los dispositivos Registrados";
             x = width / 2 - s.length() / 2;
-            y += titleLineSpacing;
+            y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
             y += textLineSpacing;
@@ -922,7 +922,7 @@ public class ThirdActivity extends AppCompatActivity {
             canvas = page.getCanvas();
             s = "datos Sobre las Marcas de los dispositivos Registrados";
             x = width / 2 - s.length() / 2;
-            y += titleLineSpacing;
+            y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
             y += textLineSpacing;
@@ -1145,7 +1145,7 @@ public class ThirdActivity extends AppCompatActivity {
             canvas = page.getCanvas();
             s = "datos Sobre la Versión de android de los dispositivos Registrados";
             x = width / 2 - s.length() / 2;
-            y += titleLineSpacing;
+            y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
             y += textLineSpacing;
@@ -1366,7 +1366,7 @@ public class ThirdActivity extends AppCompatActivity {
             canvas = page.getCanvas();
             s = "Usuarios";
             x = width / 2 - s.length() / 2;
-            y += titleLineSpacing;
+            y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             pdfDocument.finishPage(page);
 
@@ -1381,7 +1381,7 @@ public class ThirdActivity extends AppCompatActivity {
                 canvas = page.getCanvas();
                 s = "Usuario No. " + (no + 1);
                 x = width / 2 - s.length() / 2;
-                y += titleLineSpacing;
+                y = titleLineSpacing;
                 canvas.drawText(s, x, y, titles);
                 x = leftMargin;
                 y += textLineSpacing;
