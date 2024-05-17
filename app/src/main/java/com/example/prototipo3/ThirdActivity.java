@@ -1843,79 +1843,79 @@ public class ThirdActivity extends AppCompatActivity {
     }
 
     public String extendedEncodingFormat(List<Integer> points) {
-        String eef = "";
+        StringBuilder eef = new StringBuilder();
         for (int point : points) {
             if (point < 1664) {
-                eef += (char)(point / 64 + 65);
+                eef.append((char)(point / 64 + 65));
                 int p = point % 64;
                 if (p < 26) {
-                    eef += (char)(p + 65);
+                    eef.append((char)(p + 65));
                 } else if (p < 52) {
-                    eef += (char)(p + 71);
+                    eef.append((char)(p + 71));
                 } else if (p < 62) {
-                    eef += (char)(p - 4);
+                    eef.append((char)(p - 4));
                 } else if (p == 62) {
-                    eef += "-";
+                    eef.append("-");
                 } else {
-                    eef += ".";
+                    eef.append(".");
                 }
             } else if (point < 3328) {
-                eef += (char)(point / 64 + 71);
+                eef.append((char)(point / 64 + 71));
                 int p = point % 64;
                 if (p < 26) {
-                    eef += (char)(p + 65);
+                    eef.append((char)(p + 65));
                 } else if (p < 52) {
-                    eef += (char)(p + 71);
+                    eef.append((char)(p + 71));
                 } else if (p < 62) {
-                    eef += (char)(p - 4);
+                    eef.append((char)(p - 4));
                 } else if (p == 62) {
-                    eef += "-";
+                    eef.append("-");
                 } else {
-                    eef += ".";
+                    eef.append(".");
                 }
             } else if (point < 3968) {
-                eef += (char)(point / 64 - 4);
+                eef.append((char)(point / 64 - 4));
                 int p = point % 64;
                 if (p < 26) {
-                    eef += (char)(p + 65);
+                    eef.append((char)(p + 65));
                 } else if (p < 52) {
-                    eef += (char)(p + 71);
+                    eef.append((char)(p + 71));
                 } else if (p < 62) {
-                    eef += (char)(p - 4);
+                    eef.append((char)(p - 4));
                 } else if (p == 62) {
-                    eef += "-";
+                    eef.append("-");
                 } else {
-                    eef += ".";
+                    eef.append(".");
                 }
             } else if (point < 4032) {
-                eef += "-";
+                eef.append("-");
                 int p = point - 3968;
                 if (p < 26) {
-                    eef += (char)(p + 65);
+                    eef.append((char)(p + 65));
                 } else if (p < 52) {
-                    eef += (char)(p + 71);
+                    eef.append((char)(p + 71));
                 } else if (p < 62) {
-                    eef += (char)(p - 4);
+                    eef.append((char)(p - 4));
                 } else if (p == 62) {
-                    eef += "-";
+                    eef.append("-");
                 } else {
-                    eef += ".";
+                    eef.append(".");
                 }
             } else {
-                eef += ".";
+                eef.append(".");
                 int p = point - 4032;
                 if (p < 26) {
-                    eef += (char)(p + 65);
+                    eef.append((char)(p + 65));
                 } else if (p < 52) {
-                    eef += (char)(p + 71);
+                    eef.append((char)(p + 71));
                 } else if (p < 62) {
-                    eef += (char)(p - 4);
+                    eef.append((char)(p - 4));
                 } else {
-                    eef += "-";
+                    eef.append("-");
                 }
             }
         }
-        return eef;
+        return eef.toString();
     }
 
 }
