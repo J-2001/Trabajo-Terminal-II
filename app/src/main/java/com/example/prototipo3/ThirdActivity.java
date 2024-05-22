@@ -35,6 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,10 +67,12 @@ public class ThirdActivity extends AppCompatActivity {
 
         int width = 612;
         int height = 792;
-        int titleLineSpacing = 14;
-        int textLineSpacing = 13;
-        int leftMargin = 1;
-        int textSize = 11;
+        int titleTextSize = 15;
+        int textSize = 13;
+        float titleSpaceWidth = titleTextSize * 0.6F;
+        int titleLineSpacing = 21;
+        int textLineSpacing = 16;
+        int leftMargin = 8;
 
         //textSize = (int) (11 * getResources().getDisplayMetrics().density + 0.5F);
 
@@ -85,6 +88,8 @@ public class ThirdActivity extends AppCompatActivity {
 
         btn.setOnClickListener(v -> new Thread(() -> {
             Log.d("ThirdActivity", "Reporte General...");
+
+            runOnUiThread(() -> btn.setClickable(false));
 
             String[] all = getAllData().split("/");
 
@@ -221,13 +226,13 @@ public class ThirdActivity extends AppCompatActivity {
             PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(width, height, 15 + 4 * info.size() + 1).create(); // Carta (612x792)
 
             Paint titles = new Paint();
-            titles.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-            titles.setTextSize(13);
+            titles.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
+            titles.setTextSize(titleTextSize);
             titles.setColor(getColor(R.color.black));
 
             Paint text = new Paint();
             text.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-            text.setTextSize(12);
+            text.setTextSize(textSize);
             text.setColor(getColor(R.color.black));
 
             Paint images = new Paint();
@@ -240,40 +245,40 @@ public class ThirdActivity extends AppCompatActivity {
 
             String s = "Instituto Politecnico Nacional";
 
-            int x = width / 2 - s.length() / 2;
+            float x = (width - s.length() * titleSpaceWidth) / 2;
             int y = titleLineSpacing;
 
             canvas.drawText(s, x, y, titles);
-            s = "escuela superior de CómputoadesS";
-            x = width / 2 - s.length() / 2;
+            s = "Escuela superior de Cómputo";
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y += titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             s = "Reporte General Final";
-            x = width / 2 - s.length() / 2;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y += titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             s = "Trabajo Terminal No. 2024-a065";
-            x = width / 2 - s.length() / 2;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y += titleLineSpacing;
             canvas.drawText(s, x, y, titles);
-            s = "Consumo de energía en aplicaciones de video streaming";
-            x = width / 2 - s.length() / 2;
+            s = "Consumo de energía en aplicaciones de Video Streaming";
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y += titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             s = "Integrantes:";
-            x = width / 2 - s.length() / 2;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y += titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             s = "Ríos alonso Juan Jose";
-            x = width / 2 - s.length() / 2;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y += titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             s = "Roldan Gómez Juan";
-            x = width / 2 - s.length() / 2;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y += titleLineSpacing;
             canvas.drawText(s, x, y, titles);
-            s = "salazar Gómez andres";
-            x = width / 2 - s.length() / 2;
+            s = "Salazar Gómez andres";
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y += titleLineSpacing;
             canvas.drawText(s, x, y, titles);
 
@@ -282,8 +287,8 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nNo. Dispositivos Registrados: " + info.size()));
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            s = "datos Generales";
-            x = width / 2 - s.length() / 2;
+            s = "Datos Generales";
+            x = width / 2 - s.length() * titleTextSize / 4;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
@@ -442,6 +447,32 @@ public class ThirdActivity extends AppCompatActivity {
             y += textLineSpacing;
             canvas.drawText(getString(R.string.round_four_decimal_places, kcq) + " Kilogramos de Carbón Quemados", x, y, text);
 
+            Map<Integer, Integer> horas = new HashMap<>();
+
+            for (List<List<Object>> bat : bateria) {
+                Map<Integer, Integer> hours = new HashMap<>();
+                for (List<Object> b : bat) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date((Long) b.get(4)));
+                    if (hours.containsKey(calendar.get(Calendar.HOUR_OF_DAY))) {
+                        hours.put(calendar.get(Calendar.HOUR_OF_DAY), hours.get(calendar.get(Calendar.HOUR_OF_DAY)) + 1);
+                    } else {
+                        hours.put(calendar.get(Calendar.HOUR_OF_DAY), 1);
+                    }
+                }
+                int rushHour = Collections.max(hours.entrySet(), Map.Entry.comparingByValue()).getKey();
+                if (horas.containsKey(rushHour)) {
+                    horas.put(rushHour, horas.get(rushHour) + 1);
+                } else {
+                    horas.put(rushHour, 1);
+                }
+            }
+
+            int horaPico = Collections.max(horas.entrySet(), Map.Entry.comparingByValue()).getKey();
+            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nHora Pico: " + horaPico + ":00"));
+            y += textLineSpacing;
+            canvas.drawText("Hora Pico: " + horaPico + ":00", x, y, text);
+
             pdfDocument.finishPage(page);
 
             Map.Entry<String, Integer> appMasVista = Collections.max(appsVistas.entrySet(), Map.Entry.comparingByValue());
@@ -449,8 +480,8 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Vista: " + appMasVista.getValue()));
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            s = "datos sobre las aplicaciones de VideoStreaming";
-            x = width / 2 - s.length() / 2;
+            s = "Datos sobre las aplicaciones de VideoStreaming";
+            x = width / 2 - s.length() * titleTextSize / 4;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
@@ -697,8 +728,8 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Usada: " + fabricanteMayorUso.getValue()));
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            s = "datos Sobre los Fabricantes de los dispositivos Registrados";
-            x = width / 2 - s.length() / 2;
+            s = "Datos Sobre los Fabricantes de los dispositivos Registrados";
+            x = width / 2 - s.length() * titleTextSize / 4;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
@@ -920,8 +951,8 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Usada: " + marcaMayorUso.getValue()));
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            s = "datos Sobre las Marcas de los dispositivos Registrados";
-            x = width / 2 - s.length() / 2;
+            s = "Datos Sobre las Marcas de los dispositivos Registrados";
+            x = width / 2 - s.length() * titleTextSize / 4;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
@@ -1143,8 +1174,8 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nNo. de Veces Usada: " + avMayorUso.getValue()));
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
-            s = "datos Sobre la Versión de android de los dispositivos Registrados";
-            x = width / 2 - s.length() / 2;
+            s = "Datos Sobre la Versión de android de los dispositivos Registrados";
+            x = width / 2 - s.length() * titleTextSize / 4;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
@@ -1365,7 +1396,7 @@ public class ThirdActivity extends AppCompatActivity {
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
             s = "Usuarios";
-            x = width / 2 - s.length() / 2;
+            x = width / 2 - s.length() * titleTextSize / 4;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             pdfDocument.finishPage(page);
@@ -1380,7 +1411,7 @@ public class ThirdActivity extends AppCompatActivity {
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
                 s = "Usuario No. " + (no + 1);
-                x = width / 2 - s.length() / 2;
+                x = width / 2 - s.length() * titleTextSize / 4;
                 y = titleLineSpacing;
                 canvas.drawText(s, x, y, titles);
                 x = leftMargin;
@@ -1457,6 +1488,27 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nHuella de Carbono Total Generada: " + getString(R.string.round_four_decimal_places, u_totalHuellaCarbono) + " gCO2e"));
                 y += textLineSpacing;
                 canvas.drawText("Huella de Carbono Total Generada: " + getString(R.string.round_four_decimal_places, u_totalHuellaCarbono) + " gCO2e", x, y, text);
+
+                List<Long> dx = new ArrayList<>();
+                List<Integer> dy = new ArrayList<>();
+                Map<Integer, Integer> u_horas = new HashMap<>();
+
+                for (List<Object> row : bateria.get(i)) {
+                    dx.add((Long) row.get(4));
+                    dy.add((Integer) row.get(0));
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date((Long) row.get(4)));
+                    if (u_horas.containsKey(calendar.get(Calendar.HOUR_OF_DAY))) {
+                        u_horas.put(calendar.get(Calendar.HOUR_OF_DAY), u_horas.get(calendar.get(Calendar.HOUR_OF_DAY)) + 1);
+                    } else {
+                        u_horas.put(calendar.get(Calendar.HOUR_OF_DAY), 1);
+                    }
+                }
+
+                int u_horaPico = Collections.max(u_horas.entrySet(), Map.Entry.comparingByValue()).getKey();
+                runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nHora Pico: " + u_horaPico + ":00"));
+                y += textLineSpacing;
+                canvas.drawText("Hora Pico: " + u_horaPico + ":00", x, y, text);
 
                 Map.Entry<String, Integer> u_appMasVista = Collections.max(u_appsVistas.entrySet(), Map.Entry.comparingByValue());
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nApp de VS Mas Veces Vista: " + u_appMasVista.getKey()));
@@ -1697,12 +1749,6 @@ public class ThirdActivity extends AppCompatActivity {
                 try {
                     File u_chart_05 = File.createTempFile("u_chart05_", ".png", getCacheDir());
                     ImageCharts u_chart05 = new ImageCharts().cht("lxy").chs(scatterChartSize).chof(".png");
-                    List<Long> dx = new ArrayList<>();
-                    List<Integer> dy = new ArrayList<>();
-                    for (List<Object> row : bateria.get(i)) {
-                        dx.add((Long) row.get(4));
-                        dy.add((Integer) row.get(0));
-                    }
                     long startx = dx.get(0);
                     long endx = dx.get(dx.size()-1);
                     long xlimit = endx - startx;
