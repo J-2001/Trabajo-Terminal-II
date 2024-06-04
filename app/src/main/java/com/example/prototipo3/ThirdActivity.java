@@ -33,8 +33,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -67,12 +69,12 @@ public class ThirdActivity extends AppCompatActivity {
 
         int width = 612;
         int height = 792;
-        int titleTextSize = 15;
-        int textSize = 13;
+        int titleTextSize = 17;
+        int textSize = 14;
         float titleSpaceWidth = titleTextSize * 0.6F;
-        int titleLineSpacing = 21;
-        int textLineSpacing = 16;
-        int leftMargin = 8;
+        int titleLineSpacing = 24;
+        int textLineSpacing = 19;
+        int leftMargin = 9;
 
         //textSize = (int) (11 * getResources().getDisplayMetrics().density + 0.5F);
 
@@ -89,7 +91,7 @@ public class ThirdActivity extends AppCompatActivity {
         btn.setOnClickListener(v -> new Thread(() -> {
             Log.d("ThirdActivity", "Reporte General...");
 
-            runOnUiThread(() -> btn.setClickable(false));
+            runOnUiThread(() -> btn.setVisibility(View.GONE));
 
             String[] all = getAllData().split("/");
 
@@ -100,7 +102,7 @@ public class ThirdActivity extends AppCompatActivity {
             List<String> adata = new ArrayList<>();
 
             for (int i = 0; i < allData.length; i++) {
-                if (!allData[i].equals("0") && !allData[i].endsWith("::")) {
+                if (!allData[i].equals("0") && !allData[i].contains("::")) {
                     ainfo.add(allInfo[i]);
                     adata.add(allData[i]);
                 }
@@ -115,13 +117,6 @@ public class ThirdActivity extends AppCompatActivity {
                     info.get(i).add(s.split(":")[1]);
                 }
             }
-
-            textViews.add(new TextView(this));
-            textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            textViews.get(textViews.size()-1).setTextSize(textSize);
-            textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
-            textViews.get(textViews.size()-1).setText("\nInfo: " + info);
-            runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             List<List<String>> data = new ArrayList<>();
 
@@ -149,8 +144,6 @@ public class ThirdActivity extends AppCompatActivity {
                 }
             }
 
-            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nBateria: " + bateria));
-
             List<List<List<Object>>> analizador = new ArrayList<>();
 
             for (int i = 0; i < data.size(); i++) {
@@ -170,8 +163,6 @@ public class ThirdActivity extends AppCompatActivity {
                 }
             }
 
-            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nAnalizador: " + analizador));
-
             List<List<List<Object>>> escaneo = new ArrayList<>();
 
             for (int i = 0; i < data.size(); i++) {
@@ -189,7 +180,12 @@ public class ThirdActivity extends AppCompatActivity {
                 }
             }
 
-            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEscaneo: " + escaneo));
+            textViews.add(new TextView(this));
+            textViews.get(textViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            textViews.get(textViews.size()-1).setTextSize(textSize);
+            textViews.get(textViews.size()-1).setGravity(Gravity.CENTER);
+            textViews.get(textViews.size()-1).setText("Escaneo: " + escaneo);
+            runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             List<List<List<Object>>> huella = new ArrayList<>();
 
@@ -221,6 +217,10 @@ public class ThirdActivity extends AppCompatActivity {
                 }
             }
 
+            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nManufacturers: " + manufacturers));
+            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nBrands: " + brands));
+            runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nVersions: " + versions));
+
             PdfDocument pdfDocument = new PdfDocument();
 
             PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(width, height, 15 + 4 * info.size() + 1).create(); // Carta (612x792)
@@ -243,7 +243,7 @@ public class ThirdActivity extends AppCompatActivity {
 
             Canvas canvas = page.getCanvas();
 
-            String s = "Instituto Politecnico Nacional";
+            String s = "Instituto Politécnico Nacional";
 
             float x = (width - s.length() * titleSpaceWidth) / 2;
             int y = titleLineSpacing;
@@ -292,7 +292,7 @@ public class ThirdActivity extends AppCompatActivity {
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
-            y += textLineSpacing;
+            y += titleLineSpacing;
             canvas.drawText("No. Dispositivos Registrados: " + info.size(), x, y, text);
 
             int tvu = 0;
@@ -485,7 +485,7 @@ public class ThirdActivity extends AppCompatActivity {
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
-            y += textLineSpacing;
+            y += titleLineSpacing;
             canvas.drawText("App de VS Mas Veces Vista: " + appMasVista.getKey(), x, y, text);
             y += textLineSpacing;
             canvas.drawText("No. de Veces Vista: " + appMasVista.getValue(), x, y, text);
@@ -529,7 +529,7 @@ public class ThirdActivity extends AppCompatActivity {
                     dl.add(vistas.getKey());
                     co.add(videoStreaming.get(vistas.getKey()));
                 }
-                chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("l").chco(String.join("|", co)).chlps("opacity,1");
+                chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b").chlps("color,FFFFFF").chco(String.join("|", co));
                 URL url = new URL(chart01.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_01);
@@ -582,7 +582,7 @@ public class ThirdActivity extends AppCompatActivity {
                     dl.add(uso.getKey());
                     co.add(videoStreaming.get(uso.getKey()));
                 }
-                chart02.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chco(String.join("|", co));
+                chart02.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chlps("color,FFFFFF").chco(String.join("|", co));
                 URL url = new URL(chart02.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_02);
@@ -622,6 +622,7 @@ public class ThirdActivity extends AppCompatActivity {
                 File chart_03 = File.createTempFile("chart03_", ".png", getCacheDir());
                 ImageCharts chart03 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
                 List<String> dl = new ArrayList<>();
                 List<String> co = new ArrayList<>();
                 for (Map.Entry<String, Integer> consumo : appsConsumo.entrySet()) {
@@ -629,10 +630,11 @@ public class ThirdActivity extends AppCompatActivity {
                         continue;
                     }
                     d.add(String.valueOf(consumo.getValue()));
+                    l.add(largeValueFormatter(consumo.getValue()));
                     dl.add(consumo.getKey());
                     co.add(videoStreaming.get(consumo.getKey()));
                 }
-                chart03.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chco(String.join("|", co));
+                chart03.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
                 URL url = new URL(chart03.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_03);
@@ -684,7 +686,7 @@ public class ThirdActivity extends AppCompatActivity {
                     dl.add(co2.getKey());
                     co.add(videoStreaming.get(co2.getKey()));
                 }
-                chart04.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chco(String.join("|", co));
+                chart04.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
                 URL url = new URL(chart04.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_04);
@@ -772,7 +774,7 @@ public class ThirdActivity extends AppCompatActivity {
                     d.add(String.valueOf(usos.getValue()));
                     dl.add(usos.getKey());
                 }
-                chart05.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl));
+                chart05.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart05.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_05);
@@ -818,7 +820,7 @@ public class ThirdActivity extends AppCompatActivity {
                     l.add(getString(R.string.round_one_decimal_place, visualizado.getValue()/(1000.0*60*60)));
                     dl.add(visualizado.getKey());
                 }
-                chart06.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl));
+                chart06.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart06.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_06);
@@ -858,12 +860,14 @@ public class ThirdActivity extends AppCompatActivity {
                 File chart_07 = File.createTempFile("chart07_", ".png", getCacheDir());
                 ImageCharts chart07 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
                 List<String> dl = new ArrayList<>();
                 for (Map.Entry<String, Integer> consumo : fabricantesConsumo.entrySet()) {
                     d.add(String.valueOf(consumo.getValue()));
+                    l.add(largeValueFormatter(consumo.getValue()));
                     dl.add(consumo.getKey());
                 }
-                chart07.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl));
+                chart07.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart07.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_07);
@@ -910,7 +914,7 @@ public class ThirdActivity extends AppCompatActivity {
                     l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
                     dl.add(co2.getKey());
                 }
-                chart08.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", d));
+                chart08.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", d)).chdlp("b");
                 URL url = new URL(chart08.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_08);
@@ -995,7 +999,7 @@ public class ThirdActivity extends AppCompatActivity {
                     d.add(String.valueOf(usos.getValue()));
                     dl.add(usos.getKey());
                 }
-                chart09.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl));
+                chart09.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart09.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_09);
@@ -1041,7 +1045,7 @@ public class ThirdActivity extends AppCompatActivity {
                     l.add(getString(R.string.round_one_decimal_place, visualizado.getValue()/(1000.0*60*60)));
                     dl.add(visualizado.getKey());
                 }
-                chart10.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl));
+                chart10.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart10.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_10);
@@ -1081,12 +1085,14 @@ public class ThirdActivity extends AppCompatActivity {
                 File chart_11 = File.createTempFile("chart11_", ".png", getCacheDir());
                 ImageCharts chart11 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
                 List<String> dl = new ArrayList<>();
                 for (Map.Entry<String, Integer> consumo : marcasConsumo.entrySet()) {
                     d.add(String.valueOf(consumo.getValue()));
+                    l.add(largeValueFormatter(consumo.getValue()));
                     dl.add(consumo.getKey());
                 }
-                chart11.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl));
+                chart11.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart11.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_11);
@@ -1133,7 +1139,7 @@ public class ThirdActivity extends AppCompatActivity {
                     l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
                     dl.add(co2.getKey());
                 }
-                chart12.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl));
+                chart12.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart12.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_12);
@@ -1218,7 +1224,7 @@ public class ThirdActivity extends AppCompatActivity {
                     d.add(String.valueOf(usos.getValue()));
                     dl.add(usos.getKey());
                 }
-                chart13.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl));
+                chart13.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart13.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_13);
@@ -1264,7 +1270,7 @@ public class ThirdActivity extends AppCompatActivity {
                     l.add(getString(R.string.round_one_decimal_place, visualizado.getValue()/(1000.0*60*60)));
                     dl.add(visualizado.getKey());
                 }
-                chart14.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl));
+                chart14.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart14.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_14);
@@ -1304,12 +1310,14 @@ public class ThirdActivity extends AppCompatActivity {
                 File chart_15 = File.createTempFile("chart15_", ".png", getCacheDir());
                 ImageCharts chart15 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                 List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
                 List<String> dl = new ArrayList<>();
                 for (Map.Entry<String, Integer> consumo : avsConsumo.entrySet()) {
                     d.add(String.valueOf(consumo.getValue()));
+                    l.add(largeValueFormatter(consumo.getValue()));
                     dl.add(consumo.getKey());
                 }
-                chart15.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl));
+                chart15.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart15.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_15);
@@ -1356,7 +1364,7 @@ public class ThirdActivity extends AppCompatActivity {
                     l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
                     dl.add(co2.getKey());
                 }
-                chart16.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl));
+                chart16.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
                 URL url = new URL(chart16.toURL());
                 InputStream is = url.openStream();
                 OutputStream os = new FileOutputStream(chart_16);
@@ -1557,7 +1565,7 @@ public class ThirdActivity extends AppCompatActivity {
                         dl.add(vistas.getKey());
                         co.add(videoStreaming.get(vistas.getKey()));
                     }
-                    u_chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chco(String.join("|", co));
+                    u_chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
                     URL url = new URL(u_chart01.toURL());
                     InputStream is = url.openStream();
                     OutputStream os = new FileOutputStream(u_chart_01);
@@ -1608,7 +1616,7 @@ public class ThirdActivity extends AppCompatActivity {
                         dl.add(uso.getKey());
                         co.add(videoStreaming.get(uso.getKey()));
                     }
-                    u_chart02.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chco(String.join("|", co));
+                    u_chart02.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
                     URL url = new URL(u_chart02.toURL());
                     InputStream is = url.openStream();
                     OutputStream os = new FileOutputStream(u_chart_02);
@@ -1648,6 +1656,7 @@ public class ThirdActivity extends AppCompatActivity {
                     File u_chart_03 = File.createTempFile("u_chart03_", ".png", getCacheDir());
                     ImageCharts u_chart03 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                     List<String> d = new ArrayList<>();
+                    List<String> l = new ArrayList<>();
                     List<String> dl = new ArrayList<>();
                     List<String> co = new ArrayList<>();
                     for (Map.Entry<String, Integer> consumo : u_appsConsumo.entrySet()) {
@@ -1655,10 +1664,11 @@ public class ThirdActivity extends AppCompatActivity {
                             continue;
                         }
                         d.add(String.valueOf(consumo.getValue()));
+                        l.add(largeValueFormatter(consumo.getValue()));
                         dl.add(consumo.getKey());
                         co.add(videoStreaming.get(consumo.getKey()));
                     }
-                    u_chart03.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chco(String.join("|", co));
+                    u_chart03.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
                     URL url = new URL(u_chart03.toURL());
                     InputStream is = url.openStream();
                     OutputStream os = new FileOutputStream(u_chart_03);
@@ -1710,7 +1720,7 @@ public class ThirdActivity extends AppCompatActivity {
                         dl.add(co2.getKey());
                         co.add(videoStreaming.get(co2.getKey()));
                     }
-                    u_chart04.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chco(String.join("|", co));
+                    u_chart04.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
                     URL url = new URL(u_chart04.toURL());
                     InputStream is = url.openStream();
                     OutputStream os = new FileOutputStream(u_chart_04);
@@ -1886,6 +1896,18 @@ public class ThirdActivity extends AppCompatActivity {
             Log.e("getAllData()", e.toString());
             return "0";
         }
+    }
+
+    public String largeValueFormatter(int value) {
+        String[] suffix = {"", "k", "m", "b", "t"};
+        DecimalFormat format = new DecimalFormat("###E00");
+        String r = format.format(value);
+        int combined = Integer.valueOf(r.substring(r.length()-2));
+        r = r.replaceAll("E[0-9][0-9]", suffix[combined/3]);
+        while (r.length() > 5 || r.matches("[0-9]+\\.[a-z]")) {
+            r = r.substring(0, r.length()-2) + r.charAt(r.length()-1);
+        }
+        return r;
     }
 
     public String extendedEncodingFormat(List<Integer> points) {

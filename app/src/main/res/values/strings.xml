@@ -11,7 +11,7 @@
     <string name="main_btn_02">Visualizar datos generales</string>
     <string name="second_tv">Verificar Usuarios Registrados</string>
     <string name="second_tv_01">Obteniendo los Datos…</string>
-    <string name="second_tv_02">Parece ser que no hay ningún dispositivo registrado :/</string>
+    <string name="second_tv_02">Usuarios Registrados: %d</string>
     <string name="third_tv">Visualizar Estadísticas Generales</string>
     <string name="third_btn_01">Cargar Datos</string>
     <string name="round_one_decimal_place">%.1f</string>
