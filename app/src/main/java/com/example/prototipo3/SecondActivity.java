@@ -25,7 +25,17 @@ public class SecondActivity extends AppCompatActivity {
             try {
                 Log.d("SecondActivity", "Obteniendo los datos del servidor...");
                 String devicesInfo = getDevicesInfo();
-                runOnUiThread(() -> tv.setText(devicesInfo));
+                String[] deviceInfo = devicesInfo.substring(devicesInfo.indexOf("F")).split("_");
+                runOnUiThread(() -> tv.setText(getString(R.string.second_tv_02, deviceInfo.length)));
+                for (int i = 0; i < deviceInfo.length; i++) {
+                    int n = i + 1;
+                    runOnUiThread(() -> tv.append("\n\n\nUsuario No. " + n));
+                    String[] info = deviceInfo[i].split(";");
+                    runOnUiThread(() -> tv.append("\n\nFabricante: " + info[0].split(":")[1]));
+                    runOnUiThread(() -> tv.append("\nMarca: " + info[1].split(":")[1]));
+                    runOnUiThread(() -> tv.append("\nModelo: " + info[2].split(":")[1]));
+                    runOnUiThread(() -> tv.append("\nVersión de Android: " + info[3].split(":")[1]));
+                }
             } catch (Exception e) {
                 Log.e("Error al verificar los usuarios registrados:", e.toString());
             }
@@ -45,9 +55,8 @@ public class SecondActivity extends AppCompatActivity {
                 while ((nRead = is.read(buffer)) != -1) {
                     baos.write(buffer, 0, nRead);
                 }
-                String info = baos.toString();
 
-                return info;
+                return baos.toString();
             } catch (Exception e) {
                 throw new Exception(e.getCause());
             } finally {
