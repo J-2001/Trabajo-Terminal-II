@@ -23,6 +23,7 @@
             <com.google.android.material.appbar.MaterialToolbar
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="#4d82bc"
                 app:popupTheme="@style/ThemeOverlay.MaterialComponents.PopupMenu"
                 app:layout_collapseMode="pin"/>
 
@@ -57,14 +58,14 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/third_btn_01"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/third_btn_01"
-                android:textSize="18sp"
+                app:backgroundTint="#4d82bc"
+                android:textColor="#FCFFFF"
+                android:textSize="30sp"
                 android:paddingVertical="12dp"
                 android:layout_marginHorizontal="20dp"
-                android:backgroundTint="?attr/colorPrimary"
-                android:textColor="?attr/colorOnPrimary"
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_datos"
                 app:iconPadding="8dp"
