@@ -9,21 +9,6 @@
     android:background="#fff"
     tools:context=".SecondActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:titleTextColor="@color/black"
-            android:background="#fff"
-            app:title="@string/app_name"
-            app:titleCentered="true"/>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,13 +23,13 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="20dp"
                 android:gravity="center"
                 android:text="@string/second_tv"
                 android:textColor="@color/black"
                 android:textSize="30sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"/>
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/second_tv"
@@ -52,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/second_tv_01"
                 android:gravity="center"
-                android:textSize="25dp"
+                android:textSize="23sp"
                 android:textColor="@color/black"
                 android:layout_marginBottom="20dp"
                 android:textAppearance="?attr/textAppearanceBody1"/>

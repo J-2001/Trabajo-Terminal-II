@@ -69,12 +69,13 @@ public class ThirdActivity extends AppCompatActivity {
 
         int width = 612;
         int height = 792;
-        int titleTextSize = 17;
-        int textSize = 14;
+        int titleTextSize = 15;
+        float textSize = 13.5F;
         float titleSpaceWidth = titleTextSize * 0.6F;
-        int titleLineSpacing = 24;
-        int textLineSpacing = 19;
-        int leftMargin = 9;
+        float textSpaceWidth = textSize * 0.6F;
+        int titleLineSpacing = 31;
+        int textLineSpacing = 20;
+        int leftMargin = 16;
 
         //textSize = (int) (11 * getResources().getDisplayMetrics().density + 0.5F);
 
@@ -235,6 +236,14 @@ public class ThirdActivity extends AppCompatActivity {
             text.setTextSize(textSize);
             text.setColor(getColor(R.color.black));
 
+            Paint number = new Paint();
+            number.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+
+            Paint description = new Paint();
+            description.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.ITALIC));
+            description.setTextSize(textSize);
+            description.setColor(getColor(R.color.black));
+
             Paint images = new Paint();
 
             final boolean[] open = {true};
@@ -288,7 +297,7 @@ public class ThirdActivity extends AppCompatActivity {
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
             s = "Datos Generales";
-            x = width / 2 - s.length() * titleTextSize / 4;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
@@ -481,7 +490,7 @@ public class ThirdActivity extends AppCompatActivity {
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
             s = "Datos sobre las aplicaciones de VideoStreaming";
-            x = width / 2 - s.length() * titleTextSize / 4;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
@@ -543,16 +552,18 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nNúmero de Visualizaciones por App:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
+                s = "Número de Visualizaciones por App:";
+                x = (width - s.length() * textSpaceWidth) / 2;
                 y = titleLineSpacing;
-                canvas.drawText("Número de Visualizaciones por App:", x, y, text);
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 //imageViews.get(imageViews.size()-1).setAdjustViewBounds(true);
                 //imageViews.get(imageViews.size()-1).setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_01));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_01.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(01): ", e.toString());
@@ -594,14 +605,15 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo de Uso por App:"));
-                x = leftMargin;
-                y += Integer.parseInt(pieChartSize.split("x")[1]) + textLineSpacing;
-                canvas.drawText("Tiempo de Uso por App:", x, y, text);
+                s = "Tiempo de Uso por App:";
+                x = (width - s.length() * textSpaceWidth) / 2;
+                y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_02));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
                 y += textLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_02.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
@@ -648,15 +660,16 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida por App:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = leftMargin;
+                s = "Tiempo de Uso por App:";
+                x = (width - s.length() * textSpaceWidth) / 2;
                 y = titleLineSpacing;
-                canvas.drawText("Tiempo de Uso por App:", x, y, text);
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_03));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_03.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(03): ", e.toString());
@@ -698,15 +711,16 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono por App:"));
-                x = leftMargin;
-                y += Integer.parseInt(pieChartSize.split("x")[1]) + textLineSpacing;
-                canvas.drawText("Huella de Carbono por App:", x, y, text);
+                s = "Huella de Carbono por App:";
+                x = (width - s.length() * textSpaceWidth) / 2;
+                y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_04));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_04.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -731,11 +745,11 @@ public class ThirdActivity extends AppCompatActivity {
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
             s = "Datos Sobre los Fabricantes de los dispositivos Registrados";
-            x = width / 2 - s.length() * titleTextSize / 4;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
-            y += textLineSpacing;
+            y += titleLineSpacing;
             canvas.drawText("Fabricante de los Dispositivos con Mayor Uso: " + fabricanteMayorUso.getKey(), x, y, text);
             y += textLineSpacing;
             canvas.drawText("No. de Veces Usada: " + fabricanteMayorUso.getValue(), x, y, text);
@@ -788,14 +802,16 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Fabricante del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
+                s = "Total de Veces Usada por Fabricante del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
                 y = titleLineSpacing;
-                canvas.drawText("Total de Veces Usada por Fabricante del Dispositivo:", x, y, text);
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_05));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_05.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(05): ", e.toString());
@@ -832,15 +848,16 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Fabricante del Dispositivo:"));
-                x = leftMargin;
-                y += Integer.parseInt(pieChartSize.split("x")[1]) + textLineSpacing;
-                canvas.drawText("Total de Tiempo Visualizado por Fabricante del Dispositivo:", x, y, text);
+                s = "Total de Tiempo Visualizado por Fabricante del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
+                y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_06));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_06.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -881,15 +898,16 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Energía Consumida por Fabricante del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = leftMargin;
+                s = "Total de Energía Consumida por Fabricante del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
                 y = titleLineSpacing;
-                canvas.drawText("Total de Energía Consumida por Fabricante del Dispositivo:", x, y, text);
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_07));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_07.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(07): ", e.toString());
@@ -926,14 +944,15 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Fabricante del Dispositivo:"));
-                x = leftMargin;
-                y += Integer.parseInt(pieChartSize.split("x")[1]) + textLineSpacing;
-                canvas.drawText("Total de Huella de Carbono Generada por Fabricante del Dispositivo:", x, y, text);
+                s = "Total de Huella de Carbono Generada por Fabricante del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
+                y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_08));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
                 y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_08.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
@@ -956,11 +975,11 @@ public class ThirdActivity extends AppCompatActivity {
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
             s = "Datos Sobre las Marcas de los dispositivos Registrados";
-            x = width / 2 - s.length() * titleTextSize / 4;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
-            y += textLineSpacing;
+            y += titleLineSpacing;
             canvas.drawText("Marca de los dispositivos con Mayor Uso: " + marcaMayorUso.getKey(), x, y, text);
             y += textLineSpacing;
             canvas.drawText("No. de Veces Usada: " + marcaMayorUso.getValue(), x, y, text);
@@ -1013,14 +1032,16 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Marca del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
+                s = "Total de Veces Usada por Marca del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
                 y = titleLineSpacing;
-                canvas.drawText("Total de Veces Usada por Marca del Dispositivo:", x, y, text);
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_09));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_09.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(09): ", e.toString());
@@ -1057,15 +1078,16 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Marca del Dispositivo:"));
-                x = leftMargin;
-                y += Integer.parseInt(pieChartSize.split("x")[1]) + textLineSpacing;
-                canvas.drawText("Total de Tiempo Visualizado por Marca del Dispositivo:", x, y, text);
+                s = "Total de Tiempo Visualizado por Marca del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
+                y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_10));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_10.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -1106,15 +1128,16 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Energía Consumida por Marca del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = leftMargin;
+                s = "Total de Energía Consumida por Marca del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
                 y = titleLineSpacing;
-                canvas.drawText("Total de Energía Consumida por Marca del Dispositivo:", x, y, text);
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_11));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_11.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(11): ", e.toString());
@@ -1151,15 +1174,16 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Marca del Dispositivo:"));
-                x = leftMargin;
-                y += Integer.parseInt(pieChartSize.split("x")[1]) + textLineSpacing;
-                canvas.drawText("Total de Huella de Carbono Generada por Marca del Dispositivo:", x, y, text);
+                s = "Total de Huella de Carbono Generada por Marca del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
+                y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_12));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_12.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -1181,11 +1205,11 @@ public class ThirdActivity extends AppCompatActivity {
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
             s = "Datos Sobre la Versión de android de los dispositivos Registrados";
-            x = width / 2 - s.length() * titleTextSize / 4;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
-            y += textLineSpacing;
+            y += titleLineSpacing;
             canvas.drawText("Versión de Android de los dispositivos con Mayor Uso: " + avMayorUso.getKey(), x, y, text);
             y += textLineSpacing;
             canvas.drawText("No. de Veces Usada: " + avMayorUso.getValue(), x, y, text);
@@ -1238,14 +1262,16 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Versión de Android del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
+                s = "Total de Veces Usada por Versión de Android del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
                 y = titleLineSpacing;
-                canvas.drawText("Total de Veces Usada por Versión de Android del Dispositivo:", x, y, text);
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_13));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_13.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(13): ", e.toString());
@@ -1282,15 +1308,16 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Versión de Android del Dispositivo:"));
-                x = leftMargin;
-                y += Integer.parseInt(pieChartSize.split("x")[1]) + textLineSpacing;
-                canvas.drawText("Total de Tiempo Visualizado por Versión de Android del Dispositivo:", x, y, text);
+                s = "Total de Tiempo Visualizado por Versión de Android del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
+                y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_14));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_14.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -1331,15 +1358,16 @@ public class ThirdActivity extends AppCompatActivity {
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Energía Consumida por Versión de Android del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
-                x = leftMargin;
+                s = "Total de Energía Consumida por Versión de Android del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
                 y = titleLineSpacing;
-                canvas.drawText("Total de Energía Consumida por Versión de Android del Dispositivo:", x, y, text);
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_15));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_15.getAbsolutePath()), x, y, images);
             } catch (Exception e) {
                 Log.e("Error(15): ", e.toString());
@@ -1376,15 +1404,16 @@ public class ThirdActivity extends AppCompatActivity {
                 is.close();
                 os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Versión de Android del Dispositivo:"));
-                x = leftMargin;
-                y += Integer.parseInt(pieChartSize.split("x")[1]) + textLineSpacing;
-                canvas.drawText("Total de Huella de Carbono Generada por Versión de Android del Dispositivo:", x, y, text);
+                s = "Total de Huella de Carbono Generada por Versión de Android del Dispositivo:";
+                x = (width - s.length() * textSpaceWidth) / 2;
+                y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
+                canvas.drawText(s, x, y, description);
                 imageViews.add(new ImageView(this));
                 imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(chart_16));
                 runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                y += textLineSpacing;
+                x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                y += titleLineSpacing;
                 canvas.drawBitmap(BitmapFactory.decodeFile(chart_16.getAbsolutePath()), x, y, images);
                 pdfDocument.finishPage(page);
             } catch (Exception e) {
@@ -1404,7 +1433,7 @@ public class ThirdActivity extends AppCompatActivity {
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
             s = "Usuarios";
-            x = width / 2 - s.length() * titleTextSize / 4;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y = titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             pdfDocument.finishPage(page);
@@ -1419,11 +1448,11 @@ public class ThirdActivity extends AppCompatActivity {
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
                 s = "Usuario No. " + (no + 1);
-                x = width / 2 - s.length() * titleTextSize / 4;
+                x = (width - s.length() * titleSpaceWidth) / 2;
                 y = titleLineSpacing;
                 canvas.drawText(s, x, y, titles);
                 x = leftMargin;
-                y += textLineSpacing;
+                y += titleLineSpacing;
                 canvas.drawText("Fabricante del Dispositivo: " + info.get(no).get(0), x, y, text);
                 y += textLineSpacing;
                 canvas.drawText("Marca del Dispositivo: " + info.get(no).get(1), x, y, text);
@@ -1579,14 +1608,16 @@ public class ThirdActivity extends AppCompatActivity {
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nNúmero de Visualizaciones por app:"));
                     page = pdfDocument.startPage(pageInfo);
                     canvas = page.getCanvas();
+                    s = "Número de Visualizaciones por app:";
+                    x = (width - s.length() * textSpaceWidth) / 2;
                     y = titleLineSpacing;
-                    canvas.drawText("Número de Visualizaciones por app:", x, y, text);
+                    canvas.drawText(s, x, y, description);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_01));
                     runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                    x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                    y += textLineSpacing;
+                    x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                    y += titleLineSpacing;
                     canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_01.getAbsolutePath()), x, y, images);
                 } catch (Exception e) {
                     Log.e("Error(u_01): ", e.toString());
@@ -1628,15 +1659,16 @@ public class ThirdActivity extends AppCompatActivity {
                     is.close();
                     os.close();
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo de Uso por app:"));
-                    x = leftMargin;
-                    y += Integer.parseInt(pieChartSize.split("x")[1]) + textLineSpacing;
-                    canvas.drawText("Tiempo de Uso por app:", x, y, text);
+                    s = "Tiempo de Uso por app:";
+                    x = (width - s.length() * textSpaceWidth) / 2;
+                    y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
+                    canvas.drawText(s, x, y, description);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_02));
                     runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                    x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                    y += textLineSpacing;
+                    x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                    y += titleLineSpacing;
                     canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_02.getAbsolutePath()), x, y, images);
                     pdfDocument.finishPage(page);
                 } catch (Exception e) {
@@ -1682,15 +1714,16 @@ public class ThirdActivity extends AppCompatActivity {
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida por app:"));
                     page = pdfDocument.startPage(pageInfo);
                     canvas = page.getCanvas();
-                    x = leftMargin;
+                    s = "Energía Consumida por app:";
+                    x = (width - s.length() * textSpaceWidth) / 2;
                     y = titleLineSpacing;
-                    canvas.drawText("Energía Consumida por app:", x, y, text);
+                    canvas.drawText(s, x, y, description);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_03));
                     runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                    x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                    y += textLineSpacing;
+                    x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                    y += titleLineSpacing;
                     canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_03.getAbsolutePath()), x, y, images);
                 } catch (Exception e) {
                     Log.e("Error(u_03): ", e.toString());
@@ -1732,15 +1765,16 @@ public class ThirdActivity extends AppCompatActivity {
                     is.close();
                     os.close();
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono por app:"));
-                    x = leftMargin;
-                    y += Integer.parseInt(pieChartSize.split("x")[1]) + textLineSpacing;
-                    canvas.drawText("Huella de Carbono por app:", x, y, text);
+                    s = "Huella de Carbono por app:";
+                    x = (width - s.length() * textSpaceWidth) / 2;
+                    y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
+                    canvas.drawText(s, x, y, description);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_04));
                     runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                    x = width / 2 - Integer.parseInt(pieChartSize.split("x")[0]) / 2;
-                    y += textLineSpacing;
+                    x = (width - Integer.parseInt(pieChartSize.split("x")[0])) / 2;
+                    y += titleLineSpacing;
                     canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_04.getAbsolutePath()), x, y, images);
                     pdfDocument.finishPage(page);
                 } catch (Exception e) {
@@ -1806,15 +1840,16 @@ public class ThirdActivity extends AppCompatActivity {
                     runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nComportamiento de la Batería:"));
                     page = pdfDocument.startPage(pageInfo);
                     canvas = page.getCanvas();
-                    x = leftMargin;
+                    s = "Comportamiento de la Batería:";
+                    x = (width - s.length() * textSpaceWidth) / 2;
                     y = titleLineSpacing;
-                    canvas.drawText("Comportamiento de la Batería:", x, y, text);
+                    canvas.drawText(s, x, y, description);
                     imageViews.add(new ImageView(this));
                     imageViews.get(imageViews.size()-1).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     imageViews.get(imageViews.size()-1).setImageURI(Uri.fromFile(u_chart_05));
                     runOnUiThread(() -> linearLayout.addView(imageViews.get(imageViews.size()-1)));
-                    x = width / 2 - Integer.valueOf(scatterChartSize.split("x")[0]) / 2;
-                    y += textLineSpacing;
+                    x = (width - Integer.valueOf(scatterChartSize.split("x")[0])) / 2;
+                    y += titleLineSpacing;
                     canvas.drawBitmap(BitmapFactory.decodeFile(u_chart_05.getAbsolutePath()), x, y, images);
                     pdfDocument.finishPage(page);
                 } catch (Exception e) {
@@ -1832,7 +1867,7 @@ public class ThirdActivity extends AppCompatActivity {
             page = pdfDocument.startPage(pageInfo);
             canvas = page.getCanvas();
             s = "Conclusiones";
-            x = width / 2 - s.length() / 2;
+            x = (width - s.length() * titleSpaceWidth) / 2;
             y += titleLineSpacing;
             canvas.drawText(s, x, y, titles);
             x = leftMargin;
