@@ -18,6 +18,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="150dp"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="100dp"
             android:scaleX="2"
             android:scaleY="2"
@@ -35,7 +36,7 @@
             android:paddingVertical="18dp"
             android:layout_marginTop="40dp"
             android:layout_marginHorizontal="30dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="60dp"
             app:cornerRadius="8dp" />
 
         <com.google.android.material.button.MaterialButton
