@@ -1786,7 +1786,7 @@ public class ThirdActivity extends AppCompatActivity {
                 }
 
                 try {
-                    File u_chart_03 = File.createTempFile("", ".png");
+                    File u_chart_03 = File.createTempFile("chart", ".png");
                     ImageCharts u_chart03 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
                     List<String> d = new ArrayList<>();
                     List<String> l = new ArrayList<>();
