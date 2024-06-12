@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i("MainActivity", "onResume()");
         if (activityFlag) {
             flag = false;
-            finish();
         }
     }
 
