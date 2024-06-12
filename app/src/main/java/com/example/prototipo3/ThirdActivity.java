@@ -55,9 +55,6 @@ public class ThirdActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third);
 
-        boolean flag = getIntent().getBooleanExtra("flag", true);
-        Log.d("getBooleanExtra():", String.valueOf(flag));
-
         Map<String, String> videoStreaming = new HashMap<>();
         videoStreaming.put(getString(R.string.netflix), getString(R.color.netflix).substring(3));
         videoStreaming.put(getString(R.string.disneyplus), getString(R.color.disneyplus).substring(3));
@@ -573,36 +570,30 @@ public class ThirdActivity extends AppCompatActivity {
             pdfDocument.finishPage(page);
 
             try {
-                File chart_01 = new File(getCacheDir().getAbsolutePath() +  "/chart01.png");
-                if (flag) {
-                    if (!chart_01.exists()) {
-                        chart_01.delete();
-                        chart_01.createNewFile();
+                File chart_01 = File.createTempFile("chart", ".png");
+                ImageCharts chart01 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                List<String> co = new ArrayList<>();
+                for (Map.Entry<String, Integer> vistas : appsVistas.entrySet()) {
+                    if (vistas.getValue() == 0) {
+                        continue;
                     }
-                    ImageCharts chart01 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    List<String> co = new ArrayList<>();
-                    for (Map.Entry<String, Integer> vistas : appsVistas.entrySet()) {
-                        if (vistas.getValue() == 0) {
-                            continue;
-                        }
-                        d.add(String.valueOf(vistas.getValue()));
-                        dl.add(vistas.getKey());
-                        co.add(videoStreaming.get(vistas.getKey()));
-                    }
-                    chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b").chlps("color,FFFFFF").chco(String.join("|", co));
-                    URL url = new URL(chart01.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_01);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                    d.add(String.valueOf(vistas.getValue()));
+                    dl.add(vistas.getKey());
+                    co.add(videoStreaming.get(vistas.getKey()));
                 }
+                chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b").chlps("color,FFFFFF").chco(String.join("|", co));
+                URL url = new URL(chart01.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_01);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nNúmero de Visualizaciones por App:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
@@ -632,38 +623,32 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_02 = new File(getCacheDir().getAbsolutePath() + "/chart02.png");
-                if (flag) {
-                    if (!chart_02.exists()) {
-                        chart_02.delete();
-                        chart_02.createNewFile();
+                File chart_02 = File.createTempFile("chart", ".png");
+                ImageCharts chart02 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                List<String> co = new ArrayList<>();
+                for (Map.Entry<String, Long> uso : appsUso.entrySet()) {
+                    if (uso.getValue() == 0) {
+                        continue;
                     }
-                    ImageCharts chart02 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    List<String> co = new ArrayList<>();
-                    for (Map.Entry<String, Long> uso : appsUso.entrySet()) {
-                        if (uso.getValue() == 0) {
-                            continue;
-                        }
-                        d.add(String.valueOf(uso.getValue()));
-                        l.add(getString(R.string.round_one_decimal_place, uso.getValue()/(1000.0*60*60)));
-                        dl.add(uso.getKey());
-                        co.add(videoStreaming.get(uso.getKey()));
-                    }
-                    chart02.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chlps("color,FFFFFF").chco(String.join("|", co));
-                    URL url = new URL(chart02.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_02);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                    d.add(String.valueOf(uso.getValue()));
+                    l.add(getString(R.string.round_one_decimal_place, uso.getValue()/(1000.0*60*60)));
+                    dl.add(uso.getKey());
+                    co.add(videoStreaming.get(uso.getKey()));
                 }
+                chart02.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chlps("color,FFFFFF").chco(String.join("|", co));
+                URL url = new URL(chart02.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_02);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTiempo de Uso por App:"));
                 s = "Tiempo de Uso por App:";
                 x = (width - s.length() * textSpaceWidth) / 2;
@@ -695,38 +680,32 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_03 = new File(getCacheDir().getAbsolutePath() + "/chart03.png");
-                if (flag) {
-                    if (!chart_03.exists()) {
-                        chart_03.delete();
-                        chart_03.createNewFile();
+                File chart_03 = File.createTempFile("chart", ".png");
+                ImageCharts chart03 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                List<String> co = new ArrayList<>();
+                for (Map.Entry<String, Integer> consumo : appsConsumo.entrySet()) {
+                    if (consumo.getValue() == 0) {
+                        continue;
                     }
-                    ImageCharts chart03 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    List<String> co = new ArrayList<>();
-                    for (Map.Entry<String, Integer> consumo : appsConsumo.entrySet()) {
-                        if (consumo.getValue() == 0) {
-                            continue;
-                        }
-                        d.add(String.valueOf(consumo.getValue()));
-                        l.add(largeValueFormatter(consumo.getValue()));
-                        dl.add(consumo.getKey());
-                        co.add(videoStreaming.get(consumo.getKey()));
-                    }
-                    chart03.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
-                    URL url = new URL(chart03.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_03);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                    d.add(String.valueOf(consumo.getValue()));
+                    l.add(largeValueFormatter(consumo.getValue()));
+                    dl.add(consumo.getKey());
+                    co.add(videoStreaming.get(consumo.getKey()));
                 }
+                chart03.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
+                URL url = new URL(chart03.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_03);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nEnergía Consumida por App:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
@@ -756,38 +735,32 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_04 = new File(getCacheDir().getAbsolutePath() + "/chart04.png");
-                if (flag) {
-                    if (!chart_04.exists()) {
-                        chart_04.delete();
-                        chart_04.createNewFile();
+                File chart_04 = File.createTempFile("chart", ".png");
+                ImageCharts chart04 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                List<String> co = new ArrayList<>();
+                for (Map.Entry<String, Float> co2 : appsCO2.entrySet()) {
+                    if (co2.getValue() == 0) {
+                        continue;
                     }
-                    ImageCharts chart04 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    List<String> co = new ArrayList<>();
-                    for (Map.Entry<String, Float> co2 : appsCO2.entrySet()) {
-                        if (co2.getValue() == 0) {
-                            continue;
-                        }
-                        d.add(String.valueOf(co2.getValue()));
-                        l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
-                        dl.add(co2.getKey());
-                        co.add(videoStreaming.get(co2.getKey()));
-                    }
-                    chart04.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
-                    URL url = new URL(chart04.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_04);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                    d.add(String.valueOf(co2.getValue()));
+                    l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
+                    dl.add(co2.getKey());
+                    co.add(videoStreaming.get(co2.getKey()));
                 }
+                chart04.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
+                URL url = new URL(chart04.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_04);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nHuella de Carbono por App:"));
                 s = "Huella de Carbono por App:";
                 x = (width - s.length() * textSpaceWidth) / 2;
@@ -861,31 +834,25 @@ public class ThirdActivity extends AppCompatActivity {
             pdfDocument.finishPage(page);
 
             try {
-                File chart_05 = new File(getCacheDir().getAbsolutePath() + "/chart05.png");
-                if (flag) {
-                    if (!chart_05.exists()) {
-                        chart_05.delete();
-                        chart_05.createNewFile();
-                    }
-                    ImageCharts chart05 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Integer> usos : fabricantesUsos.entrySet()) {
-                        d.add(String.valueOf(usos.getValue()));
-                        dl.add(usos.getKey());
-                    }
-                    chart05.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart05.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_05);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_05 = File.createTempFile("chart", ".png");
+                ImageCharts chart05 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Integer> usos : fabricantesUsos.entrySet()) {
+                    d.add(String.valueOf(usos.getValue()));
+                    dl.add(usos.getKey());
                 }
+                chart05.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart05.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_05);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Fabricante del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
@@ -915,33 +882,27 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_06 = new File(getCacheDir().getAbsolutePath() + "/chart06.png");
-                if (flag) {
-                    if (!chart_06.exists()) {
-                        chart_06.delete();
-                        chart_06.createNewFile();
-                    }
-                    ImageCharts chart06 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Long> visualizado : fabricantesVisualizacion.entrySet()) {
-                        d.add(String.valueOf(visualizado.getValue()));
-                        l.add(getString(R.string.round_one_decimal_place, visualizado.getValue()/(1000.0*60*60)));
-                        dl.add(visualizado.getKey());
-                    }
-                    chart06.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart06.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_06);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_06 = File.createTempFile("chart", ".png");
+                ImageCharts chart06 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Long> visualizado : fabricantesVisualizacion.entrySet()) {
+                    d.add(String.valueOf(visualizado.getValue()));
+                    l.add(getString(R.string.round_one_decimal_place, visualizado.getValue()/(1000.0*60*60)));
+                    dl.add(visualizado.getKey());
                 }
+                chart06.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart06.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_06);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Fabricante del Dispositivo:"));
                 s = "Total de Tiempo Visualizado por Fabricante del Dispositivo:";
                 x = (width - s.length() * textSpaceWidth) / 2;
@@ -973,33 +934,27 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_07 = new File(getCacheDir().getAbsolutePath() + "/chart07.png");
-                if (flag) {
-                    if (!chart_07.exists()) {
-                        chart_07.delete();
-                        chart_07.createNewFile();
-                    }
-                    ImageCharts chart07 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Integer> consumo : fabricantesConsumo.entrySet()) {
-                        d.add(String.valueOf(consumo.getValue()));
-                        l.add(largeValueFormatter(consumo.getValue()));
-                        dl.add(consumo.getKey());
-                    }
-                    chart07.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart07.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_07);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_07 = File.createTempFile("chart", ".png");
+                ImageCharts chart07 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Integer> consumo : fabricantesConsumo.entrySet()) {
+                    d.add(String.valueOf(consumo.getValue()));
+                    l.add(largeValueFormatter(consumo.getValue()));
+                    dl.add(consumo.getKey());
                 }
+                chart07.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart07.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_07);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Energía Consumida por Fabricante del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
@@ -1029,33 +984,27 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_08 = new File(getCacheDir().getAbsolutePath() + "/chart08.png");
-                if (flag) {
-                    if (!chart_08.exists()) {
-                        chart_08.delete();
-                        chart_08.createNewFile();
-                    }
-                    ImageCharts chart08 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Float> co2 : fabricantesCO2.entrySet()) {
-                        d.add(String.valueOf(co2.getValue()));
-                        l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
-                        dl.add(co2.getKey());
-                    }
-                    chart08.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", d)).chdlp("b");
-                    URL url = new URL(chart08.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_08);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_08 = File.createTempFile("chart", ".png");
+                ImageCharts chart08 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Float> co2 : fabricantesCO2.entrySet()) {
+                    d.add(String.valueOf(co2.getValue()));
+                    l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
+                    dl.add(co2.getKey());
                 }
+                chart08.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", d)).chdlp("b");
+                URL url = new URL(chart08.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_08);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Fabricante del Dispositivo:"));
                 s = "Total de Huella de Carbono Generada por Fabricante del Dispositivo:";
                 x = (width - s.length() * textSpaceWidth) / 2;
@@ -1129,31 +1078,25 @@ public class ThirdActivity extends AppCompatActivity {
             pdfDocument.finishPage(page);
 
             try {
-                File chart_09 = new File(getCacheDir().getAbsolutePath() +  "/chart09.png");
-                if (flag) {
-                    if (!chart_09.exists()) {
-                        chart_09.delete();
-                        chart_09.createNewFile();
-                    }
-                    ImageCharts chart09 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Integer> usos : marcasUsos.entrySet()) {
-                        d.add(String.valueOf(usos.getValue()));
-                        dl.add(usos.getKey());
-                    }
-                    chart09.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart09.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_09);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_09 = File.createTempFile("chart", ".png");
+                ImageCharts chart09 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Integer> usos : marcasUsos.entrySet()) {
+                    d.add(String.valueOf(usos.getValue()));
+                    dl.add(usos.getKey());
                 }
+                chart09.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart09.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_09);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Marca del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
@@ -1183,33 +1126,27 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_10 = new File(getCacheDir().getAbsolutePath() +  "/chart10.png");
-                if (flag) {
-                    if (!chart_10.exists()) {
-                        chart_10.delete();
-                        chart_10.createNewFile();
-                    }
-                    ImageCharts chart10 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Long> visualizado : marcasVisualizacion.entrySet()) {
-                        d.add(String.valueOf(visualizado.getValue()));
-                        l.add(getString(R.string.round_one_decimal_place, visualizado.getValue()/(1000.0*60*60)));
-                        dl.add(visualizado.getKey());
-                    }
-                    chart10.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart10.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_10);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_10 = File.createTempFile("chart", ".png");
+                ImageCharts chart10 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Long> visualizado : marcasVisualizacion.entrySet()) {
+                    d.add(String.valueOf(visualizado.getValue()));
+                    l.add(getString(R.string.round_one_decimal_place, visualizado.getValue()/(1000.0*60*60)));
+                    dl.add(visualizado.getKey());
                 }
+                chart10.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart10.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_10);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Marca del Dispositivo:"));
                 s = "Total de Tiempo Visualizado por Marca del Dispositivo:";
                 x = (width - s.length() * textSpaceWidth) / 2;
@@ -1241,33 +1178,27 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_11 = new File(getCacheDir().getAbsolutePath() +  "/chart11.png");
-                if (flag) {
-                    if (!chart_11.exists()) {
-                        chart_11.delete();
-                        chart_11.createNewFile();
-                    }
-                    ImageCharts chart11 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Integer> consumo : marcasConsumo.entrySet()) {
-                        d.add(String.valueOf(consumo.getValue()));
-                        l.add(largeValueFormatter(consumo.getValue()));
-                        dl.add(consumo.getKey());
-                    }
-                    chart11.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart11.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_11);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_11 = File.createTempFile("chart", ".png");
+                ImageCharts chart11 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Integer> consumo : marcasConsumo.entrySet()) {
+                    d.add(String.valueOf(consumo.getValue()));
+                    l.add(largeValueFormatter(consumo.getValue()));
+                    dl.add(consumo.getKey());
                 }
+                chart11.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart11.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_11);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Energía Consumida por Marca del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
@@ -1297,33 +1228,27 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_12 = new File(getCacheDir().getAbsolutePath() +  "/chart12.png");
-                if (flag) {
-                    if (!chart_12.exists()) {
-                        chart_12.delete();
-                        chart_12.createNewFile();
-                    }
-                    ImageCharts chart12 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Float> co2 : marcasCO2.entrySet()) {
-                        d.add(String.valueOf(co2.getValue()));
-                        l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
-                        dl.add(co2.getKey());
-                    }
-                    chart12.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart12.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_12);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_12 = File.createTempFile("chart", ".png");
+                ImageCharts chart12 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Float> co2 : marcasCO2.entrySet()) {
+                    d.add(String.valueOf(co2.getValue()));
+                    l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
+                    dl.add(co2.getKey());
                 }
+                chart12.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart12.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_12);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Marca del Dispositivo:"));
                 s = "Total de Huella de Carbono Generada por Marca del Dispositivo:";
                 x = (width - s.length() * textSpaceWidth) / 2;
@@ -1397,31 +1322,25 @@ public class ThirdActivity extends AppCompatActivity {
             pdfDocument.finishPage(page);
 
             try {
-                File chart_13 = new File(getCacheDir().getAbsolutePath() +  "/chart13.png");
-                if (flag) {
-                    if (!chart_13.exists()) {
-                        chart_13.delete();
-                        chart_13.createNewFile();
-                    }
-                    ImageCharts chart13 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Integer> usos : avsUsos.entrySet()) {
-                        d.add(String.valueOf(usos.getValue()));
-                        dl.add(usos.getKey());
-                    }
-                    chart13.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart13.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_13);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_13 = File.createTempFile("chart", ".png");
+                ImageCharts chart13 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Integer> usos : avsUsos.entrySet()) {
+                    d.add(String.valueOf(usos.getValue()));
+                    dl.add(usos.getKey());
                 }
+                chart13.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart13.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_13);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\n\nTotal de Veces Usada por Versión de Android del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
@@ -1451,33 +1370,27 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_14 = new File(getCacheDir().getAbsolutePath() +  "/chart14.png");
-                if (flag) {
-                    if (!chart_14.exists()) {
-                        chart_14.delete();
-                        chart_14.createNewFile();
-                    }
-                    ImageCharts chart14 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Long> visualizado : avsVisualizacion.entrySet()) {
-                        d.add(String.valueOf(visualizado.getValue()));
-                        l.add(getString(R.string.round_one_decimal_place, visualizado.getValue()/(1000.0*60*60)));
-                        dl.add(visualizado.getKey());
-                    }
-                    chart14.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart14.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_14);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_14 = File.createTempFile("chart", ".png");
+                ImageCharts chart14 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Long> visualizado : avsVisualizacion.entrySet()) {
+                    d.add(String.valueOf(visualizado.getValue()));
+                    l.add(getString(R.string.round_one_decimal_place, visualizado.getValue()/(1000.0*60*60)));
+                    dl.add(visualizado.getKey());
                 }
+                chart14.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart14.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_14);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Tiempo Visualizado por Versión de Android del Dispositivo:"));
                 s = "Total de Tiempo Visualizado por Versión de Android del Dispositivo:";
                 x = (width - s.length() * textSpaceWidth) / 2;
@@ -1509,33 +1422,27 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_15 = new File(getCacheDir().getAbsolutePath() +  "/chart15.png");
-                if (flag) {
-                    if (!chart_15.exists()) {
-                        chart_15.delete();
-                        chart_15.createNewFile();
-                    }
-                    ImageCharts chart15 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Integer> consumo : avsConsumo.entrySet()) {
-                        d.add(String.valueOf(consumo.getValue()));
-                        l.add(largeValueFormatter(consumo.getValue()));
-                        dl.add(consumo.getKey());
-                    }
-                    chart15.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart15.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_15);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_15 = File.createTempFile("chart", ".png");
+                ImageCharts chart15 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Integer> consumo : avsConsumo.entrySet()) {
+                    d.add(String.valueOf(consumo.getValue()));
+                    l.add(largeValueFormatter(consumo.getValue()));
+                    dl.add(consumo.getKey());
                 }
+                chart15.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart15.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_15);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Energía Consumida por Versión de Android del Dispositivo:"));
                 page = pdfDocument.startPage(pageInfo);
                 canvas = page.getCanvas();
@@ -1565,33 +1472,27 @@ public class ThirdActivity extends AppCompatActivity {
             runOnUiThread(() -> linearLayout.addView(textViews.get(textViews.size()-1)));
 
             try {
-                File chart_16 = new File(getCacheDir().getAbsolutePath() +  "/chart16.png");
-                if (flag) {
-                    if (!chart_16.exists()) {
-                        chart_16.delete();
-                        chart_16.createNewFile();
-                    }
-                    ImageCharts chart16 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                    List<String> d = new ArrayList<>();
-                    List<String> l = new ArrayList<>();
-                    List<String> dl = new ArrayList<>();
-                    for (Map.Entry<String, Float> co2 : avsCO2.entrySet()) {
-                        d.add(String.valueOf(co2.getValue()));
-                        l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
-                        dl.add(co2.getKey());
-                    }
-                    chart16.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
-                    URL url = new URL(chart16.toURL());
-                    InputStream is = url.openStream();
-                    OutputStream os = new FileOutputStream(chart_16);
-                    byte[] b = new byte[1024];
-                    int nRead;
-                    while ((nRead = is.read(b)) != -1) {
-                        os.write(b, 0, nRead);
-                    }
-                    is.close();
-                    os.close();
+                File chart_16 = File.createTempFile("chart", ".png");
+                ImageCharts chart16 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                List<String> d = new ArrayList<>();
+                List<String> l = new ArrayList<>();
+                List<String> dl = new ArrayList<>();
+                for (Map.Entry<String, Float> co2 : avsCO2.entrySet()) {
+                    d.add(String.valueOf(co2.getValue()));
+                    l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
+                    dl.add(co2.getKey());
                 }
+                chart16.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b");
+                URL url = new URL(chart16.toURL());
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(chart_16);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = is.read(b)) != -1) {
+                    os.write(b, 0, nRead);
+                }
+                is.close();
+                os.close();
                 runOnUiThread(() -> textViews.get(textViews.size()-1).append("\nTotal de Huella de Carbono Generada por Versión de Android del Dispositivo:"));
                 s = "Total de Huella de Carbono Generada por Versión de Android del Dispositivo:";
                 x = (width - s.length() * textSpaceWidth) / 2;
@@ -1801,36 +1702,30 @@ public class ThirdActivity extends AppCompatActivity {
                 pdfDocument.finishPage(page);
 
                 try {
-                    File u_chart_01 = new File(getCacheDir().getAbsolutePath() +  "/u_chart01_" + i + ".png");
-                    if (flag) {
-                        if (!u_chart_01.exists()) {
-                            u_chart_01.delete();
-                            u_chart_01.createNewFile();
+                    File u_chart_01 = File.createTempFile("chart", ".png");
+                    ImageCharts u_chart01 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                    List<String> d = new ArrayList<>();
+                    List<String> dl = new ArrayList<>();
+                    List<String> co = new ArrayList<>();
+                    for (Map.Entry<String, Integer> vistas : u_appsVistas.entrySet()) {
+                        if (vistas.getValue() == 0) {
+                            continue;
                         }
-                        ImageCharts u_chart01 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                        List<String> d = new ArrayList<>();
-                        List<String> dl = new ArrayList<>();
-                        List<String> co = new ArrayList<>();
-                        for (Map.Entry<String, Integer> vistas : u_appsVistas.entrySet()) {
-                            if (vistas.getValue() == 0) {
-                                continue;
-                            }
-                            d.add(String.valueOf(vistas.getValue()));
-                            dl.add(vistas.getKey());
-                            co.add(videoStreaming.get(vistas.getKey()));
-                        }
-                        u_chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
-                        URL url = new URL(u_chart01.toURL());
-                        InputStream is = url.openStream();
-                        OutputStream os = new FileOutputStream(u_chart_01);
-                        byte[] b = new byte[1024];
-                        int nRead;
-                        while ((nRead = is.read(b)) != -1) {
-                            os.write(b, 0, nRead);
-                        }
-                        is.close();
-                        os.close();
+                        d.add(String.valueOf(vistas.getValue()));
+                        dl.add(vistas.getKey());
+                        co.add(videoStreaming.get(vistas.getKey()));
                     }
+                    u_chart01.chd("a:" + String.join(",", d)).chl(String.join("|", d)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
+                    URL url = new URL(u_chart01.toURL());
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(u_chart_01);
+                    byte[] b = new byte[1024];
+                    int nRead;
+                    while ((nRead = is.read(b)) != -1) {
+                        os.write(b, 0, nRead);
+                    }
+                    is.close();
+                    os.close();
                     page = pdfDocument.startPage(pageInfo);
                     canvas = page.getCanvas();
                     s = "Número de Visualizaciones por app:";
@@ -1847,38 +1742,32 @@ public class ThirdActivity extends AppCompatActivity {
                 }
 
                 try {
-                    File u_chart_02 = new File(getCacheDir().getAbsolutePath() +  "/u_chart02_" + i + ".png");
-                    if (flag) {
-                        if (!u_chart_02.exists()) {
-                            u_chart_02.delete();
-                            u_chart_02.createNewFile();
+                    File u_chart_02 = File.createTempFile("chart", ".png");
+                    ImageCharts u_chart02 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                    List<String> d = new ArrayList<>();
+                    List<String> l = new ArrayList<>();
+                    List<String> dl = new ArrayList<>();
+                    List<String> co = new ArrayList<>();
+                    for (Map.Entry<String, Long> uso : u_appsUso.entrySet()) {
+                        if (uso.getValue() == 0) {
+                            continue;
                         }
-                        ImageCharts u_chart02 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                        List<String> d = new ArrayList<>();
-                        List<String> l = new ArrayList<>();
-                        List<String> dl = new ArrayList<>();
-                        List<String> co = new ArrayList<>();
-                        for (Map.Entry<String, Long> uso : u_appsUso.entrySet()) {
-                            if (uso.getValue() == 0) {
-                                continue;
-                            }
-                            d.add(String.valueOf(uso.getValue()));
-                            l.add(getString(R.string.round_one_decimal_place, uso.getValue()/(1000.0*60*60)));
-                            dl.add(uso.getKey());
-                            co.add(videoStreaming.get(uso.getKey()));
-                        }
-                        u_chart02.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
-                        URL url = new URL(u_chart02.toURL());
-                        InputStream is = url.openStream();
-                        OutputStream os = new FileOutputStream(u_chart_02);
-                        byte[] b = new byte[1024];
-                        int nRead;
-                        while ((nRead = is.read(b)) != -1) {
-                            os.write(b, 0, nRead);
-                        }
-                        is.close();
-                        os.close();
+                        d.add(String.valueOf(uso.getValue()));
+                        l.add(getString(R.string.round_one_decimal_place, uso.getValue()/(1000.0*60*60)));
+                        dl.add(uso.getKey());
+                        co.add(videoStreaming.get(uso.getKey()));
                     }
+                    u_chart02.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
+                    URL url = new URL(u_chart02.toURL());
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(u_chart_02);
+                    byte[] b = new byte[1024];
+                    int nRead;
+                    while ((nRead = is.read(b)) != -1) {
+                        os.write(b, 0, nRead);
+                    }
+                    is.close();
+                    os.close();
                     s = "Tiempo de Uso por app:";
                     x = (width - s.length() * textSpaceWidth) / 2;
                     y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
@@ -1897,38 +1786,32 @@ public class ThirdActivity extends AppCompatActivity {
                 }
 
                 try {
-                    File u_chart_03 = new File(getCacheDir().getAbsolutePath() +  "/u_chart03_" + i + ".png");
-                    if (flag) {
-                        if (!u_chart_03.exists()) {
-                            u_chart_03.delete();
-                            u_chart_03.createNewFile();
+                    File u_chart_03 = File.createTempFile("", ".png");
+                    ImageCharts u_chart03 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                    List<String> d = new ArrayList<>();
+                    List<String> l = new ArrayList<>();
+                    List<String> dl = new ArrayList<>();
+                    List<String> co = new ArrayList<>();
+                    for (Map.Entry<String, Integer> consumo : u_appsConsumo.entrySet()) {
+                        if (consumo.getValue() == 0) {
+                            continue;
                         }
-                        ImageCharts u_chart03 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                        List<String> d = new ArrayList<>();
-                        List<String> l = new ArrayList<>();
-                        List<String> dl = new ArrayList<>();
-                        List<String> co = new ArrayList<>();
-                        for (Map.Entry<String, Integer> consumo : u_appsConsumo.entrySet()) {
-                            if (consumo.getValue() == 0) {
-                                continue;
-                            }
-                            d.add(String.valueOf(consumo.getValue()));
-                            l.add(largeValueFormatter(consumo.getValue()));
-                            dl.add(consumo.getKey());
-                            co.add(videoStreaming.get(consumo.getKey()));
-                        }
-                        u_chart03.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
-                        URL url = new URL(u_chart03.toURL());
-                        InputStream is = url.openStream();
-                        OutputStream os = new FileOutputStream(u_chart_03);
-                        byte[] b = new byte[1024];
-                        int nRead;
-                        while ((nRead = is.read(b)) != -1) {
-                            os.write(b, 0, nRead);
-                        }
-                        is.close();
-                        os.close();
+                        d.add(String.valueOf(consumo.getValue()));
+                        l.add(largeValueFormatter(consumo.getValue()));
+                        dl.add(consumo.getKey());
+                        co.add(videoStreaming.get(consumo.getKey()));
                     }
+                    u_chart03.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
+                    URL url = new URL(u_chart03.toURL());
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(u_chart_03);
+                    byte[] b = new byte[1024];
+                    int nRead;
+                    while ((nRead = is.read(b)) != -1) {
+                        os.write(b, 0, nRead);
+                    }
+                    is.close();
+                    os.close();
                     page = pdfDocument.startPage(pageInfo);
                     canvas = page.getCanvas();
                     s = "Energía Consumida por app:";
@@ -1945,38 +1828,32 @@ public class ThirdActivity extends AppCompatActivity {
                 }
 
                 try {
-                    File u_chart_04 = new File(getCacheDir().getAbsolutePath() +  "/u_chart04_" + i + ".png");
-                    if (flag) {
-                        if (!u_chart_04.exists()) {
-                            u_chart_04.delete();
-                            u_chart_04.createNewFile();
+                    File u_chart_04 = File.createTempFile("chart", ".png");
+                    ImageCharts u_chart04 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
+                    List<String> d = new ArrayList<>();
+                    List<String> l = new ArrayList<>();
+                    List<String> dl = new ArrayList<>();
+                    List<String> co = new ArrayList<>();
+                    for (Map.Entry<String, Float> co2 : u_appsCO2.entrySet()) {
+                        if (co2.getValue() == 0) {
+                            continue;
                         }
-                        ImageCharts u_chart04 = new ImageCharts().cht("p").chs(pieChartSize).chof(".png");
-                        List<String> d = new ArrayList<>();
-                        List<String> l = new ArrayList<>();
-                        List<String> dl = new ArrayList<>();
-                        List<String> co = new ArrayList<>();
-                        for (Map.Entry<String, Float> co2 : u_appsCO2.entrySet()) {
-                            if (co2.getValue() == 0) {
-                                continue;
-                            }
-                            d.add(String.valueOf(co2.getValue()));
-                            l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
-                            dl.add(co2.getKey());
-                            co.add(videoStreaming.get(co2.getKey()));
-                        }
-                        u_chart04.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
-                        URL url = new URL(u_chart04.toURL());
-                        InputStream is = url.openStream();
-                        OutputStream os = new FileOutputStream(u_chart_04);
-                        byte[] b = new byte[1024];
-                        int nRead;
-                        while ((nRead = is.read(b)) != -1) {
-                            os.write(b, 0, nRead);
-                        }
-                        is.close();
-                        os.close();
+                        d.add(String.valueOf(co2.getValue()));
+                        l.add(getString(R.string.round_four_decimal_places, co2.getValue()));
+                        dl.add(co2.getKey());
+                        co.add(videoStreaming.get(co2.getKey()));
                     }
+                    u_chart04.chd("a:" + String.join(",", d)).chl(String.join("|", l)).chdl(String.join("|", dl)).chdlp("b").chco(String.join("|", co)).chlps("color,FFFFFF");
+                    URL url = new URL(u_chart04.toURL());
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(u_chart_04);
+                    byte[] b = new byte[1024];
+                    int nRead;
+                    while ((nRead = is.read(b)) != -1) {
+                        os.write(b, 0, nRead);
+                    }
+                    is.close();
+                    os.close();
                     s = "Huella de Carbono por app:";
                     x = (width - s.length() * textSpaceWidth) / 2;
                     y += Integer.parseInt(pieChartSize.split("x")[1]) + titleLineSpacing;
@@ -1995,58 +1872,52 @@ public class ThirdActivity extends AppCompatActivity {
                 }
 
                 try {
-                    File u_chart_05 = new File(getCacheDir().getAbsolutePath() +  "/u_chart05_" + i + ".png");
-                    if (flag) {
-                        if (!u_chart_05.exists()) {
-                            u_chart_05.delete();
-                            u_chart_05.createNewFile();
-                        }
-                        ImageCharts u_chart05 = new ImageCharts().cht("lxy").chs(scatterChartSize).chof(".png");
-                        long startx = dx.get(0);
-                        long endx = dx.get(dx.size()-1);
-                        long xlimit = endx - startx;
-                        int starty = Collections.min(dy);
-                        int endy = Collections.max(dy);
-                        int ylimit = endy - starty;
-                        List<String> xl = new ArrayList<>();
-                        for (long l = 0; l <= xlimit; l += Math.round(xlimit/5.0)) {
-                            xl.add(sdf.format(new Date(startx + l)).substring(0, 6));
-                        }
-                        List<String> yl = new ArrayList<>();
-                        for (int j = 0; j <= ylimit; j += Math.round(ylimit/7F)) {
-                            yl.add(String.valueOf(starty + j));
-                        }
-                        List<Integer> dxn = new ArrayList<>();
-                        for (Long l : dx) {
-                            int t = 4094 - Math.round((endx - l) * 4094F / xlimit);
-                            dxn.add(t);
-                        }
-                        int startyn = 0;
-                        int endyn = 0;
-                        List<Integer> dyn = new ArrayList<>();
-                        for (Integer j : dy) {
-                            int t = 4094 - Math.round((endy - j) * 4094F / ylimit);
-                            dyn.add(t);
-                            if (j == starty) {
-                                startyn = t;
-                            }
-                            if (j == endy) {
-                                endyn = t;
-                            }
-                        }
-                        u_chart05.chd("e:" + extendedEncodingFormat(dxn) + "," + extendedEncodingFormat(dyn)).chxr("0," + startyn + "," + endyn + "|1," + dxn.get(0) + "," + dxn.get(dxn.size()-1));
-                        u_chart05.chxt("y,x").chxl("0:|" + String.join("|", yl) + "|1:|" + String.join("|", xl)).chls("2").chm("o,FF0000,0,-1,4.0");
-                        URL url = new URL(u_chart05.toURL());
-                        InputStream is = url.openStream();
-                        OutputStream os = new FileOutputStream(u_chart_05);
-                        byte[] b = new byte[1024];
-                        int nRead;
-                        while ((nRead = is.read(b)) != -1) {
-                            os.write(b, 0, nRead);
-                        }
-                        is.close();
-                        os.close();
+                    File u_chart_05 = File.createTempFile("chart", ".png");
+                    ImageCharts u_chart05 = new ImageCharts().cht("lxy").chs(scatterChartSize).chof(".png");
+                    long startx = dx.get(0);
+                    long endx = dx.get(dx.size()-1);
+                    long xlimit = endx - startx;
+                    int starty = Collections.min(dy);
+                    int endy = Collections.max(dy);
+                    int ylimit = endy - starty;
+                    List<String> xl = new ArrayList<>();
+                    for (long l = 0; l <= xlimit; l += Math.round(xlimit/5.0)) {
+                        xl.add(sdf.format(new Date(startx + l)).substring(0, 6));
                     }
+                    List<String> yl = new ArrayList<>();
+                    for (int j = 0; j <= ylimit; j += Math.round(ylimit/7F)) {
+                        yl.add(String.valueOf(starty + j));
+                    }
+                    List<Integer> dxn = new ArrayList<>();
+                    for (Long l : dx) {
+                        int t = 4094 - Math.round((endx - l) * 4094F / xlimit);
+                        dxn.add(t);
+                    }
+                    int startyn = 0;
+                    int endyn = 0;
+                    List<Integer> dyn = new ArrayList<>();
+                    for (Integer j : dy) {
+                        int t = 4094 - Math.round((endy - j) * 4094F / ylimit);
+                        dyn.add(t);
+                        if (j == starty) {
+                            startyn = t;
+                        }
+                        if (j == endy) {
+                            endyn = t;
+                        }
+                    }
+                    u_chart05.chd("e:" + extendedEncodingFormat(dxn) + "," + extendedEncodingFormat(dyn)).chxr("0," + startyn + "," + endyn + "|1," + dxn.get(0) + "," + dxn.get(dxn.size()-1));
+                    u_chart05.chxt("y,x").chxl("0:|" + String.join("|", yl) + "|1:|" + String.join("|", xl)).chls("2").chm("o,FF0000,0,-1,4.0");
+                    URL url = new URL(u_chart05.toURL());
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(u_chart_05);
+                    byte[] b = new byte[1024];
+                    int nRead;
+                    while ((nRead = is.read(b)) != -1) {
+                        os.write(b, 0, nRead);
+                    }
+                    is.close();
+                    os.close();
                     page = pdfDocument.startPage(pageInfo);
                     canvas = page.getCanvas();
                     s = "Comportamiento de la Batería:";
